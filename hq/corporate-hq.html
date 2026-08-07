@@ -152,6 +152,41 @@
   .co-beam{stroke-dasharray:6 10;animation:co-dash 1.2s linear infinite}
   @keyframes co-dash{to{stroke-dashoffset:-16}}
 
+  /* ---- Cofre de credenciais (Cybersegurança · nível Hard) ---- */
+  #creds{position:fixed;top:70px;right:0;bottom:0;width:470px;z-index:9;
+    background:linear-gradient(270deg,rgba(7,10,18,.96),rgba(7,10,18,.72),rgba(7,10,18,0));
+    padding:16px 20px 30px;transform:translateX(105%);transition:transform .28s cubic-bezier(.2,.9,.3,1);overflow-y:auto}
+  #creds.open{transform:none}
+  .cr-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .cr-head b{font-size:15px;letter-spacing:.5px;color:#fff}
+  .cr-head small{display:block;font-size:9px;color:var(--dim);letter-spacing:.4px;margin-top:2px}
+  .cr-card{background:var(--panel);border:1px solid var(--linha);border-radius:12px;padding:14px;margin-bottom:12px}
+  .cr-note{font-size:11px;color:var(--dim);line-height:1.5;margin:8px 0 12px}
+  .cr-inp{width:100%;background:rgba(8,12,22,.7);border:1px solid var(--linha);color:var(--txt);
+    border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:8px;outline:none;font-family:inherit}
+  .cr-inp:focus{border-color:var(--accent)}
+  textarea.cr-inp{resize:vertical}
+  .cr-meter{height:6px;border-radius:4px;background:rgba(120,150,255,.15);overflow:hidden;margin:2px 0 6px}
+  .cr-meter i{display:block;height:100%;transition:width .2s}
+  .cr-forca{font-size:10px;color:var(--dim);margin-bottom:12px;min-height:14px}
+  .cr-btn{width:100%;border:1px solid var(--accent);background:rgba(34,211,238,.12);color:var(--accent);
+    padding:9px;border-radius:8px;font-size:12px;cursor:pointer;transition:.15s}
+  .cr-btn:hover{background:rgba(34,211,238,.25)}
+  .cr-rec{background:var(--panel);border:1px solid var(--linha);border-radius:12px;padding:12px;margin-bottom:10px}
+  .cr-rec-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .cr-srv{font-size:13px;font-weight:600;color:#fff}
+  .cr-acts{display:flex;gap:6px}
+  .cr-acts button,.cr-eye,.cr-lock{border:1px solid var(--linha);background:rgba(120,150,255,.08);color:var(--dim);
+    padding:4px 9px;border-radius:7px;font-size:10px;cursor:pointer;transition:.15s}
+  .cr-acts button:hover,.cr-eye:hover,.cr-lock:hover{border-color:var(--accent);color:var(--accent)}
+  .cr-acts .cr-del:hover{border-color:#ff6b6b;color:#ff6b6b}
+  .cr-line{display:flex;gap:8px;font-size:11px;color:var(--txt);margin:3px 0;align-items:center}
+  .cr-line .lbl{color:var(--dim);flex:none;width:52px}
+  .cr-seg{font-family:Consolas,monospace;letter-spacing:1px}
+  .cr-lock{border-color:var(--amber);color:var(--amber);background:rgba(242,201,76,.1)}
+  .cr-lock:hover{border-color:var(--amber);color:var(--amber);background:rgba(242,201,76,.2)}
+  .cr-empty{color:var(--dim);font-size:12px;text-align:center;padding:30px 0}
+
   @media (max-width:640px){
     .logo .sub{display:none}
     #hint{display:none}
@@ -163,6 +198,7 @@
     .co-legend{display:none}
     #co-ticker{font-size:10px;bottom:10px;left:5%;transform:none;max-width:90%}
     .co-corners{inset:70px 8px 48px}
+    #creds{width:100%}
   }
 </style>
 </head>
@@ -180,6 +216,7 @@
       <button id="tab_equipe" class="on" onclick="setModo('equipe')">Equipe 3D</button>
       <button id="tab_demanda" onclick="setModo('demandas')">Demandas</button>
       <button id="tab_cowork" onclick="setModo('cowork')">Cowork</button>
+      <button id="tab_creds" onclick="setModo('creds')">Credenciais</button>
     </div>
     <div class="chips">
       <div class="chip v"><b id="st_exec">0</b>Executivos</div>
@@ -212,6 +249,11 @@
     <div id="co-status"><b id="co-online">0</b>SUBAGENTES EM ATIVIDADE</div>
     <div class="co-legend" id="co-legend"></div>
     <div id="co-ticker"><span class="tdot"></span><span id="co-txt">COWORK · SALA DE OPERAÇÕES</span></div>
+  </div>
+
+  <div id="creds">
+    <div class="cr-head"><b>Cofre de Credenciais</b><small>CRIPTOGRAFIA HARD · AES-GCM-256 + PBKDF2-SHA256</small></div>
+    <div id="cr_body"></div>
   </div>
 
   <script src="hq-data.js"></script>
@@ -442,12 +484,15 @@
       document.getElementById('tab_equipe').classList.toggle('on', m==='equipe');
       document.getElementById('tab_demanda').classList.toggle('on', m==='demandas');
       document.getElementById('tab_cowork').classList.toggle('on', m==='cowork');
+      document.getElementById('tab_creds').classList.toggle('on', m==='creds');
       document.getElementById('demandas').classList.toggle('open', m==='demandas');
       document.getElementById('cowork').classList.toggle('open', m==='cowork');
+      document.getElementById('creds').classList.toggle('open', m==='creds');
       document.getElementById('legend').style.display = m==='equipe' ? '' : 'none';
       document.getElementById('hint').style.display = m==='equipe' ? '' : 'none';
       if(m==='cowork'){ if(typeof buildCowork==='function'){ buildCowork(); startCoworkTicker(); } }
       if(m!=='cowork') stopCoworkTicker();
+      if(m==='creds') renderCreds();
       if(m==='equipe') fecharPainel();
     };
     window.focar = focar;
@@ -584,6 +629,215 @@
       if(cowork.classList.contains('open')) buildCowork();
       reposCowork();
     });
+
+    /* ---------- cofre de credenciais (Cybersegurança · nível Hard) ---------- */
+    const crBody = document.getElementById('cr_body');
+    const CR_META = 'kraefegg_hq_vault_meta';
+    const CR_DATA = 'kraefegg_hq_vault';
+    const CR_ITER = 310000;
+    let crChave = null;
+    let crRegistros = [];
+    let crSalt = null;
+
+    function b64u(u){ var s=''; for(var i=0;i<u.length;i++) s+=String.fromCharCode(u[i]); return btoa(s); }
+    function unb64(b){ var s=atob(b), u=new Uint8Array(s.length); for(var i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u; }
+    function crSecure(){ return !!(window.crypto && crypto.subtle); }
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+    /* ---- Password Analyser (entropia · força · estimativa de crack) ---- */
+    function passAnalyse(p){
+      if(!p) return { score:0, bits:0, forca:'—', cor:'#8ea3c6', pct:0, crack:'—' };
+      var pool=0;
+      if(/[a-z]/.test(p)) pool+=26;
+      if(/[A-Z]/.test(p)) pool+=26;
+      if(/[0-9]/.test(p)) pool+=10;
+      if(/[^a-zA-Z0-9]/.test(p)) pool+=33;
+      var bits=p.length*Math.log2(Math.max(pool,2));
+      if(/(.)\1{2,}/.test(p)) bits*=.7;
+      if(/^[a-zA-Z0-9]+$/.test(p) && /[a-zA-Z]{4,}|[0-9]{4,}/.test(p)) bits*=.9;
+      var comuns=['123456','senha','password','admin','kraefegg','minera','qwerty','abc123','000000','12345678','root','iloveyou','orquestrador'];
+      for(var i=0;i<comuns.length;i++){ if(p.toLowerCase().indexOf(comuns[i])>=0){ bits=Math.min(bits,24); break; } }
+      var score = bits<28?0 : bits<40?1 : bits<56?2 : bits<76?3 : 4;
+      var nomes=['Crítica','Fraca','Média','Forte','Excelente'];
+      var cores=['#ff6b6b','#ff8a5c','#f2c94c','#51cf66','#22d3ee'];
+      var pct=Math.min(100, Math.round(bits/80*100));
+      var crack = bits<=0?'—' : bits<40?'segundos' : bits<60?'horas' : bits<80?'meses' : 'anos';
+      return { score:score, bits:Math.round(bits), forca:nomes[score], cor:cores[score], pct:pct, crack:crack };
+    }
+    function crMeter(v, mid){
+      var a=passAnalyse(v);
+      var bar=document.getElementById('cr_meter_'+mid);
+      var lbl=document.getElementById('cr_forca_'+mid);
+      if(bar){ bar.style.width=a.pct+'%'; bar.style.background=a.cor; }
+      if(lbl) lbl.textContent = a.forca+' · ~'+a.bits+' bits · crack estimado em '+a.crack+' ('+a.pct+'%)';
+    }
+
+    /* ---- criptografia (WebCrypto: AES-GCM-256, chave via PBKDF2-SHA256) ---- */
+    function crDerivar(senha, salt, iter){
+      return crypto.subtle.importKey('raw', new TextEncoder().encode(senha), 'PBKDF2', false, ['deriveKey'])
+        .then(function(mat){
+          return crypto.subtle.deriveKey({name:'PBKDF2', salt:salt, iterations:iter, hash:'SHA-256'},
+            mat, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+        });
+    }
+    function crCifrar(chave, obj){
+      var iv=crypto.getRandomValues(new Uint8Array(12));
+      return crypto.subtle.encrypt({name:'AES-GCM', iv:iv}, chave, new TextEncoder().encode(JSON.stringify(obj)))
+        .then(function(ct){ return { iv:b64u(iv), ct:b64u(new Uint8Array(ct)) }; });
+    }
+    function crDecifrar(chave, blob){
+      return crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(blob.iv)}, chave, unb64(blob.ct))
+        .then(function(pt){ return JSON.parse(new TextDecoder().decode(pt)); });
+    }
+
+    function credsSalvarBlob(meta, dados){
+      var salt = meta ? unb64(meta.salt) : (crSalt || crypto.getRandomValues(new Uint8Array(16)));
+      var iter = meta ? meta.iter : CR_ITER;
+      if(!crChave) return;
+      return crCifrar(crChave, dados).then(function(blob){
+        localStorage.setItem(CR_DATA, JSON.stringify(blob));
+        if(!meta) localStorage.setItem(CR_META, JSON.stringify({ salt:b64u(salt), iter:iter, kdf:'PBKDF2-SHA256', alg:'AES-GCM-256' }));
+      });
+    }
+
+    function renderCreds(){
+      var meta=null; try{ meta=JSON.parse(localStorage.getItem(CR_META)); }catch(e){}
+      if(!crSecure()){
+        crBody.innerHTML = '<div class="cr-card"><div class="cr-srv" style="color:#ff6b6b">Criptografia indisponível</div>'+
+          '<p class="cr-note">A API WebCrypto (crypto.subtle) não está disponível neste contexto. Abra o HQ via <b>https</b> ou <b>localhost</b> para habilitar o cofre em nível Hard.</p></div>';
+        return;
+      }
+      if(!meta){
+        crBody.innerHTML =
+          '<div class="cr-card">'+
+            '<div class="lbl" style="margin-bottom:8px">Configuração inicial — senha-mestra</div>'+
+            '<p class="cr-note">O cofre é cifrado localmente (AES-GCM-256, chave derivada via PBKDF2-SHA256 · 310.000 iterações). Sem a senha-mestra é <b>impossível</b> ler as credenciais — inclusive para este painel. A senha não é armazenada.</p>'+
+            '<input id="cr_senha1" type="password" class="cr-inp" placeholder="Nova senha-mestra (mín. 12 caracteres)" oninput="crMeter(this.value,0)">'+
+            '<input id="cr_senha2" type="password" class="cr-inp" placeholder="Repita a senha-mestra">'+
+            '<div class="cr-meter"><i id="cr_meter_0" style="width:0%"></i></div>'+
+            '<div class="cr-forca" id="cr_forca_0">Digite para analisar a força…</div>'+
+            '<button class="cr-btn" onclick="credsCriar()">Criar cofre</button>'+
+          '</div>';
+        return;
+      }
+      if(!crChave){
+        crBody.innerHTML =
+          '<div class="cr-card">'+
+            '<div class="lbl" style="margin-bottom:8px">Cofre bloqueado</div>'+
+            '<p class="cr-note">Informe a senha-mestra para desbloquear e descriptografar as credenciais em memória.</p>'+
+            '<input id="cr_senha" type="password" class="cr-inp" placeholder="Senha-mestra" oninput="crMeter(this.value,1)">'+
+            '<div class="cr-meter"><i id="cr_meter_1" style="width:0%"></i></div>'+
+            '<div class="cr-forca" id="cr_forca_1">Digite para analisar a força…</div>'+
+            '<button class="cr-btn" onclick="credsEntrar()">Desbloquear</button>'+
+          '</div>';
+        return;
+      }
+      var list = crRegistros.map(function(r){
+        return '<div class="cr-rec">'+
+          '<div class="cr-rec-h"><span class="cr-srv">'+esc(r.servico)+'</span>'+
+            '<span class="cr-acts">'+
+              '<button onclick="crCopiar(\''+r.id+'\')">Copiar</button>'+
+              '<button onclick="crRevelar(\''+r.id+'\')">Mostrar</button>'+
+              '<button class="cr-del" onclick="crExcluir(\''+r.id+'\')">Excluir</button>'+
+            '</span></div>'+
+          '<div class="cr-line"><span class="lbl">Usuário</span><span>'+esc(r.usuario)+'</span></div>'+
+          '<div class="cr-line"><span class="lbl">Senha</span><span class="cr-seg" id="cr_seg_'+r.id+'" data-open="">••••••••••</span></div>'+
+          '<div class="cr-line"><span class="lbl">Força</span><span style="color:'+r.cor+'">'+r.forca+' · ~'+r.bits+' bits</span></div>'+
+          (r.notas?'<div class="cr-line"><span class="lbl">Notas</span><span>'+esc(r.notas)+'</span></div>':'')+
+        '</div>';
+      }).join('');
+      crBody.innerHTML =
+        '<div class="cr-card">'+
+          '<div class="cr-rec-h" style="margin:0 0 10px">'+
+            '<span class="cr-srv">Cofre aberto · '+crRegistros.length+' credencial(is)</span>'+
+            '<span class="cr-acts"><button class="cr-lock" onclick="credsBloquear()">Bloquear</button></span>'+
+          '</div>'+
+          (crRegistros.length ? list : '<div class="cr-empty">Nenhuma credencial guardada.</div>')+
+        '</div>'+
+        '<div class="cr-card">'+
+          '<div class="lbl" style="margin-bottom:8px">Nova credencial</div>'+
+          '<input id="cr_novo_servico" class="cr-inp" placeholder="Serviço / sistema (ex: GitHub, Supabase, Atlas)">'+
+          '<input id="cr_novo_usuario" class="cr-inp" placeholder="Usuário / e-mail">'+
+          '<input id="cr_novo_senha" type="password" class="cr-inp" placeholder="Senha" oninput="crMeter(this.value,2)">'+
+          '<div class="cr-meter"><i id="cr_meter_2" style="width:0%"></i></div>'+
+          '<div class="cr-forca" id="cr_forca_2">Digite para analisar a força…</div>'+
+          '<input id="cr_novo_notas" class="cr-inp" placeholder="Notas (URL, contexto, agente responsável…)">'+
+          '<button class="cr-btn" onclick="credsAdicionar()">Salvar credencial</button>'+
+        '</div>';
+    }
+
+    function credsCriar(){
+      var s1=document.getElementById('cr_senha1').value;
+      var s2=document.getElementById('cr_senha2').value;
+      if(s1.length<12){ alert('Senha-mestra deve ter no mínimo 12 caracteres.'); return; }
+      if(s1!==s2){ alert('As senhas não conferem.'); return; }
+      var a=passAnalyse(s1);
+      if(a.score<2){ alert('Senha-mestra '+a.forca+' ('+a.bits+' bits). Use pelo menos 12 caracteres com maiúsculas, números e símbolos.'); return; }
+      var salt=crypto.getRandomValues(new Uint8Array(16));
+      crSalt=salt;
+      return crDerivar(s1, salt, CR_ITER).then(function(chave){
+        crChave=chave; crRegistros=[];
+        return credsSalvarBlob(null, { v:1, registros:[] }).then(function(){
+          var e1=document.getElementById('cr_senha1'), e2=document.getElementById('cr_senha2');
+          if(e1) e1.value=''; if(e2) e2.value='';
+          renderCreds();
+        });
+      });
+    }
+    function credsEntrar(){
+      var s=document.getElementById('cr_senha').value;
+      var meta; try{ meta=JSON.parse(localStorage.getItem(CR_META)); }catch(e){}
+      if(!meta){ renderCreds(); return; }
+      return crDerivar(s, unb64(meta.salt), meta.iter).then(function(chave){
+        var blob; try{ blob=JSON.parse(localStorage.getItem(CR_DATA)); }catch(e){}
+        if(!blob) throw new Error('vazio');
+        return crDecifrar(chave, blob).then(function(dados){
+          crChave=chave; crRegistros=dados.registros||[];
+          var e=document.getElementById('cr_senha'); if(e) e.value='';
+          renderCreds();
+        });
+      }).catch(function(){
+        alert('Senha-mestra incorreta ou cofre corrompido.');
+      });
+    }
+    function credsBloquear(){ crChave=null; crSalt=null; crRegistros=[]; renderCreds(); }
+    function credsAdicionar(){
+      var sv=document.getElementById('cr_novo_servico').value.trim();
+      var us=document.getElementById('cr_novo_usuario').value.trim();
+      var se=document.getElementById('cr_novo_senha').value;
+      var no=document.getElementById('cr_novo_notas').value.trim();
+      if(!sv||!us||!se){ alert('Preencha serviço, usuário e senha.'); return; }
+      var a=passAnalyse(se);
+      crRegistros.push({
+        id:'C'+Date.now().toString(36),
+        servico:sv, usuario:us, senha:se, notas:no,
+        forca:a.forca, bits:a.bits, cor:a.cor,
+        criado:new Date().toISOString()
+      });
+      var meta; try{ meta=JSON.parse(localStorage.getItem(CR_META)); }catch(e){}
+      return credsSalvarBlob(meta, { v:1, registros:crRegistros }).then(renderCreds);
+    }
+    function crRevelar(id){
+      var el=document.getElementById('cr_seg_'+id); if(!el) return;
+      var r=crRegistros.find(function(x){ return x.id===id; }); if(!r) return;
+      if(el.dataset.open){ el.textContent='••••••••••'; el.dataset.open=''; }
+      else { el.textContent=r.senha; el.dataset.open='1'; setTimeout(function(){ var e=document.getElementById('cr_seg_'+id); if(e && e.dataset.open){ e.textContent='••••••••••'; e.dataset.open=''; } }, 15000); }
+    }
+    function crCopiar(id){
+      var r=crRegistros.find(function(x){ return x.id===id; }); if(!r) return;
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(r.senha).then(function(){ alert('Senha copiada para a área de transferência.'); });
+      } else alert('Clipboard API indisponível neste contexto.');
+    }
+    function crExcluir(id){
+      if(!confirm('Excluir esta credencial?')) return;
+      crRegistros=crRegistros.filter(function(x){ return x.id!==id; });
+      credsSalvarBlob(JSON.parse(localStorage.getItem(CR_META)), { v:1, registros:crRegistros }).then(renderCreds);
+    }
+
+    window.credsCriar=credsCriar; window.credsEntrar=credsEntrar; window.credsBloquear=credsBloquear;
+    window.credsAdicionar=credsAdicionar; window.crRevelar=crRevelar; window.crCopiar=crCopiar;
+    window.crExcluir=crExcluir; window.crMeter=crMeter;
 
     /* ---------- cena 3D (falha controlada: DOM acima continua funcionando) ---------- */
     try {
