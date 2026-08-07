@@ -70,3 +70,59 @@ const ORG = {
 };
 
 ORG.headcount = ORG.staff.length;
+
+// ============ FASES DAS ATIVIDADES ============
+const FASES = [
+  { id: 'backlog',   nome: 'Backlog',     cor: '#8ea3c6' },
+  { id: 'analise',   nome: 'Em análise',  cor: '#f2c94c' },
+  { id: 'execucao',  nome: 'Em execução', cor: '#22d3ee' },
+  { id: 'revisao',   nome: 'Em revisão',  cor: '#b197fc' },
+  { id: 'concluida', nome: 'Concluída',   cor: '#51cf66' }
+];
+
+// ============ DEMANDAS & ATIVIDADES ============
+// fase/status editáveis no painel; alterações persistem em localStorage.
+// responsavel = id de um agente em ORG.staff.
+const DEMANDAS = [
+  { id: 'D-01', titulo: 'Proposta PRAD Caraúbas-PB (SUDEMA) — consolidação da oferta',
+    area: 'amb', responsavel: 'environmental-engineering', fase: 'execucao', prioridade: 'Alta', prazo: '15/08', progresso: 60,
+    descricao: 'Fechar escopo, preço e cronograma do PRAD para envio à SUDEMA; envolver finance e market-segment.' },
+  { id: 'D-02', titulo: 'Laudo de passivo ambiental para instituição financeira',
+    area: 'amb', responsavel: 'environmental-forensic-audit', fase: 'analise', prioridade: 'Média', prazo: '18/08', progresso: 30,
+    descricao: 'Diagnóstico de passivo com datação por NDVI; aplicável a financiamento/crédito rural.' },
+  { id: 'D-03', titulo: 'Campanha de prospecção — 40 contatos do tracker (dias 0-30)',
+    area: 'com', responsavel: 'client-prospecting', fase: 'execucao', prioridade: 'Alta', prazo: '12/08', progresso: 75,
+    descricao: 'Sequenciar e-mails/WhatsApp, agendar reuniões e registrar desdobramentos no tracker-contatos.csv.' },
+  { id: 'D-04', titulo: 'Minuta de contrato de assinatura de monitoramento contínuo',
+    area: 'com', responsavel: 'contracts-business', fase: 'revisao', prioridade: 'Alta', prazo: '10/08', progresso: 90,
+    descricao: 'Modelo SaaS de monitoramento geoambiental recorrente (mensal/trimestral) com SLAs e reajuste.' },
+  { id: 'D-05', titulo: 'PoC M1 — telemetria IoT da estação meteorológica',
+    area: 'eng', responsavel: 'iot-embedded', fase: 'concluida', prioridade: 'Alta', prazo: '05/08', progresso: 100,
+    descricao: 'Contrato de telemetria, firmware MicroPython (ESP32-S3) e bridge MQTT→JSON integrados ao AIO Observatory.' },
+  { id: 'D-06', titulo: 'Pipeline automático de NDVI (Zenodo/GitHub → dataset versionado)',
+    area: 'eng', responsavel: 'data-engineering', fase: 'backlog', prioridade: 'Média', prazo: '25/08', progresso: 0,
+    descricao: 'Coleta programada das séries Sentinel-2 do repo kraefegg/AIO com validação e camada bronze/silver.' },
+  { id: 'D-07', titulo: 'Precificação dos kits IoT e fluxo de caixa 90 dias',
+    area: 'com', responsavel: 'finance', fase: 'analise', prioridade: 'Alta', prazo: '14/08', progresso: 40,
+    descricao: 'Custo de BOM + instalação + assinatura; modelar receita vs despesa e ponto de equilíbrio.' },
+  { id: 'D-08', titulo: 'LGPD e minuta de NDA/confidencialidade',
+    area: 'com', responsavel: 'legal-compliance', fase: 'revisao', prioridade: 'Média', prazo: '11/08', progresso: 80,
+    descricao: 'Revisar fluxo de dados (Open-Meteo/INPE/GitHub) e modelo de NDA para reuniões com clientes.' },
+  { id: 'D-09', titulo: 'Red Team — teste de segurança do HQ e do AIO Observatory',
+    area: 'seg', responsavel: 'cybersecurity', fase: 'backlog', prioridade: 'Média', prazo: '20/08', progresso: 0,
+    descricao: 'Revisão de vetores: CDNs, telemetria, localStorage e headers; relatório White/Blue/Red.' },
+  { id: 'D-10', titulo: 'Artigo técnico — monitoramento do PRAD por sensoriamento remoto',
+    area: 'pes', responsavel: 'research-academic', fase: 'analise', prioridade: 'Baixa', prazo: '30/08', progresso: 20,
+    descricao: 'Método NDVI/NDWI para restauração da Caatinga; candidato a preprint e dataset Zenodo.' },
+  { id: 'D-11', titulo: 'HQ 3D — módulo de demandas e fases das atividades',
+    area: 'eng', responsavel: 'engineering-dev', fase: 'execucao', prioridade: 'Alta', prazo: '09/08', progresso: 50,
+    descricao: 'Painel de gestão no corporate-hq.html: lista por fase, detalhe editável, persistência em localStorage.' },
+  { id: 'D-12', titulo: 'Dashboard de geração solar para cliente-piloto',
+    area: 'ene', responsavel: 'renewable-energy', fase: 'backlog', prioridade: 'Média', prazo: '22/08', progresso: 0,
+    descricao: 'Séries de geração (Open-Meteo/energia) com economia em tarifa horária e relatório mensal.' }
+];
+
+// expõe como globais explícitas (const no topo não vira window.X)
+window.ORG = ORG;
+window.FASES = FASES;
+window.DEMANDAS = DEMANDAS;
