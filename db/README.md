@@ -13,6 +13,8 @@ Camada de dados da empresa em arquitetura **híbrida**, toda **dinâmica** (trig
 |---|---|
 | `schema.sql` | DDL PostgreSQL completo (enums, tabelas, triggers, views) no schema `kraefegg` |
 | `seed.sql` | Dados iniciais do PostgreSQL (37 agentes, CRM, demandas, financeiro) — reexecutável |
+| `init-postgres-local.ps1` | Inicializa o PostgreSQL local instalado (ROLE/DATABASE `kraefegg` + schema/seed). **Requer admin** |
+| `apply-supabase.ps1` | Aplica schema + seed num PostgreSQL hospedado (Supabase/Neon) via `SUPABASE_URI` em `db/.env` |
 | `mongodb/` | Camada MongoDB de telemetria: `01-schema.js`, `02-seed.js` e README |
 | `docker-compose.yml` | Sobe PostgreSQL 16 + MongoDB 7 com schema/seed automáticos |
 
@@ -50,6 +52,34 @@ docker compose --profile local-mongo up -d    # + MongoDB local (opcional; só d
 psql -h localhost -U kraefegg -d kraefegg -f db/schema.sql
 psql -h localhost -U kraefegg -d kraefegg -f db/seed.sql
 ```
+
+### Opção A — PostgreSQL local instalado (sem Docker)
+
+Se o PostgreSQL já está instalado como serviço, rode **como Administrador**:
+
+```powershell
+.\db\init-postgres-local.ps1
+```
+
+Cria `ROLE`/`DATABASE kraefegg` (senha `kraefegg_dev`), aplica schema+seed e restaura a autenticação original.
+
+### Opção B — PostgreSQL hospedado (Supabase/Neon, sem consumo local)
+
+Crie um projeto grátis no [Supabase](https://supabase.com) (ou Neon), pegue a connection string
+(pooler ou direta) + senha do banco, e salve em `db/.env`:
+
+```powershell
+# db/.env (não versionado)
+SUPABASE_URI="postgresql://postgres.XXXXX:senha@aws-0-<regiao>.pooler.supabase.com:6543/postgres"
+```
+
+Depois:
+
+```powershell
+.\db\apply-supabase.ps1
+```
+
+> O schema usa apenas recursos padrão do PostgreSQL (`pgcrypto` incluso, enums, triggers, views), compatível com Supabase.
 
 O `seed.sql` limpa e reinsere tudo (idempotente). Em dev, recriar o banco:
 
