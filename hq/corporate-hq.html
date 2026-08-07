@@ -6,14 +6,22 @@
 <title>HQ — Kraefegg M.O. · Painel de Gestão 3D</title>
 <style>
   :root{
-    --bg1:#070a12; --bg2:#0d1322; --panel:rgba(13,19,34,.86);
-    --linha:rgba(120,150,255,.18); --txt:#e8eefc; --dim:#8ea3c6;
-    --accent:#22d3ee; --amber:#f2c94c;
+    --bg1:#070b12; --bg2:#131a28; --panel:rgba(21,28,43,.9);
+    --linha:rgba(148,172,208,.22); --txt:#e8eefb; --dim:#8ea6c4;
+    --accent:#5ea0ff; --amber:#f2c94c;
+    --steelA:#39475e; --steelB:#8ca3c0; --steelC:#dde8f7;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100%;background:radial-gradient(1200px 700px at 50% 30%,var(--bg2),var(--bg1));color:var(--txt);
+  html,body{height:100%;background:#070b12;color:var(--txt);
     font-family:'Segoe UI',system-ui,Arial,sans-serif;overflow:hidden}
-  #cena{position:fixed;inset:0;display:block;cursor:grab}
+
+  /* ---- Pixel art: construção corporativa KRAEFEGG MO (fundo) ---- */
+  #pxbuild{position:fixed;inset:0;z-index:0;display:block;background:#070b12;image-rendering:pixelated}
+  #pxscan{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(5,8,14,.16) 0 1px,transparent 1px 3px);
+    opacity:.55;mix-blend-mode:overlay}
+
+  #cena{position:fixed;inset:0;z-index:2;display:block;cursor:grab}
   #cena:active{cursor:grabbing}
 
   /* ---- Aviso de erro ---- */
@@ -23,14 +31,20 @@
 
   /* ---- HUD superior ---- */
   #hud{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:14px;
-    padding:12px 18px;background:linear-gradient(180deg,rgba(7,10,18,.92),rgba(7,10,18,0));
+    padding:12px 18px;background:linear-gradient(180deg,rgba(7,11,18,.94),rgba(7,11,18,0));
     border-bottom:1px solid var(--linha)}
-  .logo b{font-size:17px;letter-spacing:1px;color:#fff}
-  .logo b span{color:var(--accent)}
+  .logo b{font-size:17px;letter-spacing:2px;font-weight:700;
+    background:linear-gradient(180deg,var(--steelC),var(--steelB) 55%,var(--steelA));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 20px rgba(94,160,255,.28)}
+  .logo b span{color:var(--accent);background:none;-webkit-text-fill-color:var(--accent);
+    text-shadow:0 0 14px rgba(94,160,255,.55)}
   .logo .sub{font-size:10px;color:var(--dim);letter-spacing:2px}
   .chips{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-  .chip{background:var(--panel);border:1px solid var(--linha);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--dim)}
-  .chip b{display:block;color:#fff;font-size:14px;line-height:1.1}
+  .chip{background:linear-gradient(180deg,rgba(30,39,58,.9),rgba(18,25,40,.9));
+    border:1px solid var(--linha);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--dim);
+    box-shadow:inset 0 1px 0 rgba(220,232,247,.07)}
+  .chip b{display:block;color:var(--steelC);font-size:14px;line-height:1.1}
   .chip.v b{color:var(--amber)}
   .chip.a b{color:var(--accent)}
 
@@ -40,15 +54,17 @@
     border-radius:999px;padding:5px 11px;font-size:11px;color:var(--dim);cursor:pointer;transition:.15s}
   .tag .dot{width:9px;height:9px;border-radius:50%}
   .tag:hover{color:#fff;border-color:var(--accent)}
-  .tag.on{color:#fff;border-color:var(--accent);background:rgba(34,211,238,.12)}
+  .tag.on{color:#fff;border-color:var(--accent);background:rgba(94,160,255,.12)}
 
   /* ---- Ajuda / rodapé ---- */
   #hint{position:fixed;bottom:14px;right:14px;z-index:10;font-size:10px;color:var(--dim);background:var(--panel);
     border:1px solid var(--linha);padding:6px 10px;border-radius:8px;letter-spacing:.3px;max-width:300px}
 
   /* ---- Painel de detalhes ---- */
-  #panel{position:fixed;top:78px;right:16px;z-index:10;width:330px;background:var(--panel);border:1px solid var(--linha);
-    border-radius:14px;padding:18px;backdrop-filter:blur(8px);box-shadow:0 18px 50px rgba(0,0,0,.5);
+  #panel{position:fixed;top:78px;right:16px;z-index:10;width:330px;
+    background:linear-gradient(180deg,rgba(31,41,60,.96),rgba(17,23,36,.92));
+    border:1px solid rgba(148,172,208,.32);border-radius:14px;padding:18px;
+    backdrop-filter:blur(8px);box-shadow:0 18px 50px rgba(0,0,0,.55),inset 0 1px 0 rgba(220,232,247,.08);
     transform:translateX(120%);transition:transform .28s cubic-bezier(.2,.9,.3,1);overflow-y:auto;max-height:calc(100vh - 100px)}
   #panel.open{transform:none}
   #panel .close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer}
@@ -61,27 +77,30 @@
   #panel .lbl{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
   #panel .val{font-size:13px;line-height:1.5;margin:2px 0 10px}
   #panel .btns{display:flex;gap:8px}
-  #panel button{flex:1;border:1px solid var(--accent);background:rgba(34,211,238,.1);color:var(--accent);
+  #panel button{flex:1;border:1px solid var(--accent);background:rgba(94,160,255,.1);color:var(--accent);
     padding:8px;border-radius:8px;font-size:12px;cursor:pointer;transition:.15s}
-  #panel button:hover{background:rgba(34,211,238,.25)}
+  #panel button:hover{background:rgba(94,160,255,.25)}
 
   /* ---- Abas de modo ---- */
   #tabs{display:flex;gap:6px}
-  #tabs button{background:var(--panel);border:1px solid var(--linha);color:var(--dim);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;letter-spacing:.3px;transition:.15s}
+  #tabs button{background:linear-gradient(180deg,rgba(30,39,58,.85),rgba(17,23,36,.9));
+    border:1px solid var(--linha);color:var(--dim);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;letter-spacing:.3px;transition:.15s;
+    box-shadow:inset 0 1px 0 rgba(220,232,247,.06)}
   #tabs button:hover{color:#fff}
-  #tabs button.on{color:#fff;border-color:var(--accent);background:rgba(34,211,238,.12)}
+  #tabs button.on{color:#fff;border-color:var(--accent);background:rgba(94,160,255,.12)}
 
   /* ---- Painel de demandas ---- */
   #demandas{position:fixed;top:70px;left:0;bottom:0;width:400px;z-index:9;
-    background:linear-gradient(90deg,rgba(7,10,18,.94),rgba(7,10,18,.55),rgba(7,10,18,0));
+    background:linear-gradient(90deg,rgba(9,13,22,.96),rgba(9,13,22,.62),rgba(9,13,22,0));
     padding:16px 18px 30px;transform:translateX(-105%);transition:transform .28s cubic-bezier(.2,.9,.3,1);overflow-y:auto}
   #demandas.open{transform:none}
   #demandas .dh{display:flex;align-items:baseline;gap:8px}
-  #demandas .dh b{font-size:15px;letter-spacing:.5px}
+  #demandas .dh b{font-size:15px;letter-spacing:.5px;
+    background:linear-gradient(180deg,var(--steelC),var(--steelB));-webkit-background-clip:text;background-clip:text;color:transparent}
   #demandas .dh span{font-size:11px;color:var(--dim)}
   .df{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 14px}
   .df button{background:none;border:1px solid var(--linha);color:var(--dim);border-radius:999px;padding:4px 11px;font-size:10px;cursor:pointer;transition:.15s}
-  .df button.on{color:#fff;border-color:var(--accent);background:rgba(34,211,238,.12)}
+  .df button.on{color:#fff;border-color:var(--accent);background:rgba(94,160,255,.12)}
   .dcard{background:var(--panel);border:1px solid var(--linha);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;transition:.15s}
   .dcard:hover{border-color:var(--accent);transform:translateX(2px)}
   .dcard .tt{font-size:13px;line-height:1.35}
@@ -96,22 +115,22 @@
   .dctrl{display:flex;gap:6px;flex-wrap:wrap}
   .dctrl button{flex:1;min-width:90px;border:1px solid var(--linha);background:rgba(120,150,255,.08);color:var(--txt);
     padding:8px;border-radius:8px;font-size:11px;cursor:pointer;transition:.15s}
-  .dctrl button:hover{border-color:var(--accent);background:rgba(34,211,238,.15)}
+  .dctrl button:hover{border-color:var(--accent);background:rgba(94,160,255,.15)}
   .dprogress{display:flex;align-items:center;gap:10px;margin:4px 0 12px}
   .dprogress .pbar{flex:1;height:8px;border-radius:5px;background:rgba(120,150,255,.15);overflow:hidden}
   .dprogress .pbar i{display:block;height:100%;background:var(--accent);transition:width .2s}
   .dprogress b{font-size:12px;color:var(--accent);width:38px;text-align:right}
   .stepper{display:inline-flex;align-items:center;gap:0;border:1px solid var(--linha);border-radius:8px;overflow:hidden}
   .stepper button{flex:none;min-width:0;width:30px;padding:6px 0;border:none;background:none;color:var(--accent);font-size:14px}
-  .stepper button:hover{background:rgba(34,211,238,.15)}
+  .stepper button:hover{background:rgba(94,160,255,.15)}
   .stepper span{font-size:12px;min-width:34px;text-align:center}
 
   /* ---- Cowork: sala de operações isométrica ---- */
   #cowork{position:fixed;inset:0;z-index:8;display:none;overflow:hidden;
-    background:radial-gradient(900px 600px at 50% 45%,rgba(13,19,34,.25),rgba(7,10,18,.92))}
+    background:radial-gradient(900px 600px at 50% 45%,rgba(13,19,34,.12),rgba(7,11,18,.9))}
   #cowork.open{display:block}
   .co-corners{position:absolute;inset:70px 16px 56px;pointer-events:none}
-  .co-corners i{position:absolute;width:26px;height:26px;border:2px solid rgba(34,211,238,.5)}
+  .co-corners i{position:absolute;width:26px;height:26px;border:2px solid rgba(94,160,255,.5)}
   .co-corners .tl{top:0;left:0;border-right:none;border-bottom:none}
   .co-corners .tr{top:0;right:0;border-left:none;border-bottom:none}
   .co-corners .bl{bottom:0;left:0;border-right:none;border-top:none}
@@ -154,11 +173,12 @@
 
   /* ---- Cofre de credenciais (Cybersegurança · nível Hard) ---- */
   #creds{position:fixed;top:70px;right:0;bottom:0;width:470px;z-index:9;
-    background:linear-gradient(270deg,rgba(7,10,18,.96),rgba(7,10,18,.72),rgba(7,10,18,0));
+    background:linear-gradient(270deg,rgba(9,13,22,.96),rgba(9,13,22,.72),rgba(9,13,22,0));
     padding:16px 20px 30px;transform:translateX(105%);transition:transform .28s cubic-bezier(.2,.9,.3,1);overflow-y:auto}
   #creds.open{transform:none}
   .cr-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
-  .cr-head b{font-size:15px;letter-spacing:.5px;color:#fff}
+  .cr-head b{font-size:15px;letter-spacing:.5px;
+    background:linear-gradient(180deg,var(--steelC),var(--steelB));-webkit-background-clip:text;background-clip:text;color:transparent}
   .cr-head small{display:block;font-size:9px;color:var(--dim);letter-spacing:.4px;margin-top:2px}
   .cr-card{background:var(--panel);border:1px solid var(--linha);border-radius:12px;padding:14px;margin-bottom:12px}
   .cr-note{font-size:11px;color:var(--dim);line-height:1.5;margin:8px 0 12px}
@@ -169,9 +189,9 @@
   .cr-meter{height:6px;border-radius:4px;background:rgba(120,150,255,.15);overflow:hidden;margin:2px 0 6px}
   .cr-meter i{display:block;height:100%;transition:width .2s}
   .cr-forca{font-size:10px;color:var(--dim);margin-bottom:12px;min-height:14px}
-  .cr-btn{width:100%;border:1px solid var(--accent);background:rgba(34,211,238,.12);color:var(--accent);
+  .cr-btn{width:100%;border:1px solid var(--accent);background:rgba(94,160,255,.12);color:var(--accent);
     padding:9px;border-radius:8px;font-size:12px;cursor:pointer;transition:.15s}
-  .cr-btn:hover{background:rgba(34,211,238,.25)}
+  .cr-btn:hover{background:rgba(94,160,255,.25)}
   .cr-rec{background:var(--panel);border:1px solid var(--linha);border-radius:12px;padding:12px;margin-bottom:10px}
   .cr-rec-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
   .cr-srv{font-size:13px;font-weight:600;color:#fff}
@@ -203,6 +223,8 @@
 </style>
 </head>
 <body>
+  <canvas id="pxbuild" aria-hidden="true"></canvas>
+  <div id="pxscan" aria-hidden="true"></div>
   <canvas id="cena"></canvas>
 
   <div id="aviso"></div>
@@ -259,6 +281,144 @@
   <script src="hq-data.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+  /* ============ Pixel art: construção corporativa KRAEFEGG MO ============ */
+  (function(){
+    var cv = document.getElementById('pxbuild');
+    if(!cv) return;
+    var ctx = cv.getContext('2d'), bg = null;
+    var PS = 6, GW = 150, GH = 96, ts = 0, lastFlip = 0;
+    var x0, x1, cx, ground, winCols, winRows, winLit, winCol, signX, cars = [];
+
+    var FONT = {
+      K:['101','110','100','110','101'], R:['110','101','110','101','101'],
+      A:['010','101','111','101','101'], E:['111','100','111','100','111'],
+      F:['111','100','111','100','100'], G:['011','100','101','101','011'],
+      M:['101','111','111','101','101'], O:['010','101','101','101','010'], ' ':[]
+    };
+    var SIGN = 'KRAEFEGG MO';
+    var seed = 98765;
+    function rnd(){ seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    function rect(x, y, w, h, cor){ ctx.fillStyle = cor; ctx.fillRect(Math.floor(x*PS), Math.floor(y*PS), Math.ceil(w*PS), Math.ceil(h*PS)); }
+    function txt(s, x, y, sc, cor){
+      var sx = x;
+      for(var i=0;i<s.length;i++){
+        var g = FONT[s[i]];
+        if(g){ for(var r=0;r<5;r++) for(var c=0;c<3;c++) if(g[r][c]==='1'){ ctx.fillStyle=cor; ctx.fillRect(Math.floor((sx+c)*PS*sc), Math.floor((y+r)*PS*sc), PS*sc, PS*sc); } }
+        sx += 3*sc;
+      }
+    }
+
+    function prep(){
+      var scale = Math.max(innerWidth/GW, innerHeight/GH);
+      PS = Math.max(2, Math.round(scale));
+      cv.width = GW*PS; cv.height = GH*PS;
+      bg = document.createElement('canvas'); bg.width = cv.width; bg.height = cv.height;
+      x0 = Math.floor(GW/2) - 22; x1 = x0 + 44; cx = Math.floor(GW/2); ground = 86;
+      winCols = 0; winRows = 0;
+      for(var wx=x0+4; wx < x1-6; wx+=3) winCols++;
+      for(var wy=16; wy < ground-8; wy+=3) winRows++;
+      winLit = new Array(winCols*winRows); winCol = new Array(winCols*winRows);
+      for(var i=0;i<winLit.length;i++){ winLit[i] = rnd() < .42; winCol[i] = rnd() < .18 ? '#f2c94c' : '#7fc4ff'; }
+      signX = x0 + Math.floor((44 - SIGN.length*3)/2);
+      cars = [];
+      for(var k=0;k<5;k++) cars.push({ x: rnd()*GW, dir: rnd()<.5?-1:1, v: .35+rnd()*.5, c: ['#8ca3c0','#5ea0ff','#f2c94c','#4b5a72','#c9d6ea'][k] });
+      drawBG();
+    }
+
+    function drawBG(){
+      var old = ctx; ctx = bg.getContext('2d');
+      var g = ctx.createLinearGradient(0, 0, 0, GH*PS);
+      g.addColorStop(0, '#070b14'); g.addColorStop(.55, '#0e1728'); g.addColorStop(.82, '#22314e'); g.addColorStop(1, '#2b3a58');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, GW*PS, GH*PS);
+      var rg = ctx.createRadialGradient(cx*PS, ground*PS, 8*PS, cx*PS, ground*PS, 60*PS);
+      rg.addColorStop(0, 'rgba(94,160,255,.18)'); rg.addColorStop(1, 'rgba(94,160,255,0)');
+      ctx.fillStyle = rg; ctx.fillRect(0, 0, GW*PS, GH*PS);
+
+      for(var s=0;s<40;s++){ rect(rnd()*GW, rnd()*30, 1, 1, 'rgba(200,215,235,.5)'); }
+
+      var far = [[14,62,10,'#182132'], [34,66,8,'#151d2e'], [116,70,6,'#182132'], [130,60,9,'#141b2b']];
+      for(var f=0;f<far.length;f++){
+        rect(far[f][0], far[f][1], far[f][2], ground-far[f][1], far[f][3]);
+        for(var w=0;w<3;w++){ rect(far[f][0]+2+rnd()*(far[f][2]-4), far[f][1]+4+w*8, 1, 1, '#3a4f75'); }
+      }
+
+      var fg = ctx.createLinearGradient(0, 6*PS, 0, ground*PS);
+      fg.addColorStop(0, '#2d3b54'); fg.addColorStop(1, '#20293b');
+      ctx.fillStyle = fg; ctx.fillRect(x0*PS, 6*PS, 44*PS, (ground-6)*PS);
+      for(var st=x0; st<x1; st+=5) rect(st, 6, 1, ground-6, 'rgba(10,14,24,.18)');
+      rect(x0, ground, 44, 2, 'rgba(94,160,255,.22)');
+      rect(x0-1, 3, 46, 3, '#33415a'); rect(x0-1, 3, 46, 1, '#5a6d8c');
+      rect(cx-6, 2, 12, 1, '#49576f'); rect(cx-6, 3, 12, 1, '#1d2638');
+      rect(cx-1, 0, 2, 3, '#3c4c66'); rect(x0+4, 1, 1, 4, '#2c3850'); rect(x1-5, 1, 1, 4, '#2c3850');
+      rect(cx-4, ground-5, 8, 5, '#131a28'); rect(cx-2, ground-3, 4, 3, '#0d1118');
+
+      rect(6, 40, 22, ground-40, '#232d42'); rect(7, 42, 20, 1, '#33415a');
+      rect(118, 34, 22, ground-34, '#212a3e'); rect(119, 36, 20, 1, '#2f3c55');
+
+      rect(138, 24, 3, ground-24, '#2b3648'); rect(96, 23, 48, 2, '#3c4c66'); rect(141, 23, 6, 2, '#3c4c66');
+      rect(138, 22, 3, 2, '#4a5b76'); rect(136, 24, 2, 1, '#4a5b76'); rect(140, 23, 1, 2, '#4a5b76');
+
+      rect(0, ground, GW, 3, '#141c2a'); rect(0, ground, GW, 1, '#33415a');
+      rect(0, 90, GW, 2, '#263145'); rect(0, 92, GW, 4, '#0c1119');
+      for(var lm=0;lm<4;lm++){ var lx=20+lm*36; rect(lx, 80, 1, ground-80, '#3c4c66'); rect(lx-1, 79, 3, 1, '#4a5b76'); }
+      ctx = old;
+    }
+
+    function frame(){
+      ts++;
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      ctx.drawImage(bg, 0, 0);
+
+      var i = 0;
+      for(var r=0;r<winRows;r++) for(var c=0;c<winCols;c++){
+        var wx = x0+4 + c*3, wy = 16 + r*3;
+        if(winLit[i]){ rect(wx, wy, 2, 2, winCol[i]); rect(wx+1, wy, 1, 1, 'rgba(255,255,255,.55)'); }
+        else rect(wx, wy, 2, 2, '#2f3d55');
+        i++;
+      }
+      if(ts > lastFlip + 11){ lastFlip = ts; for(var f=0;f<9;f++) winLit[Math.floor(rnd()*winLit.length)] = rnd() < .5; }
+
+      var glow = .10 + .10 * Math.sin(ts/240);
+      rect(signX-3, 8, SIGN.length*3+6, 8, 'rgba(94,160,255,'+glow.toFixed(3)+')');
+      txt(SIGN, signX, 10, 1, '#cfe6ff');
+      txt(SIGN, signX, 10, 1, 'rgba(207,230,255,.35)');
+
+      if(Math.floor(ts/28)%2===0) rect(cx, 0, 2, 1, '#ff5a5a');
+      if(Math.floor(ts/34)%2===0){ rect(cx-5, 2, 1, 1, '#eef6ff'); rect(cx+4, 2, 1, 1, '#eef6ff'); }
+      if(Math.floor(ts/30)%2===0) rect(96, 23, 1, 1, '#ff5a5a');
+      if(Math.floor(ts/22)%2===0) rect(x0+4, 1, 1, 1, '#ff9d5a'); else rect(x0+4, 1, 1, 1, '#5affa0');
+      if(Math.floor(ts/22)%2===0) rect(x1-5, 1, 1, 1, '#ff9d5a'); else rect(x1-5, 1, 1, 1, '#5affa0');
+
+      var hy = ground-10 + Math.floor((Math.sin(ts/900)+1)/2 * 6);
+      rect(108, 26, 1, hy-26, '#2b3648'); rect(107, hy, 3, 1, '#f2c94c'); rect(108, hy+1, 1, 1, '#f2c94c');
+      var ho = 40 + Math.floor(Math.sin(ts/500)*28);
+      rect(x0-1, ho, 1, 3, '#f2c94c'); rect(x0-2, ho, 1, 1, '#f2c94c'); rect(x0-2, ho+2, 1, 1, '#f2c94c');
+
+      var plx = (ts*.15) % (GW+20) - 10;
+      rect(plx, 16, 4, 1, '#8ca3c0'); rect(plx+1, 15, 1, 2, '#8ca3c0'); rect(plx+3, 15, 1, 1, '#8ca3c0');
+      if(Math.floor(ts/26)%2===0) rect(plx, 16, 1, 1, '#ff5a5a');
+
+      for(var k=0;k<cars.length;k++){
+        var car = cars[k]; car.x += car.v * car.dir;
+        if(car.x > GW+4) car.x = -6; if(car.x < -6) car.x = GW+4;
+        var lane = 87 + (k%2);
+        rect(car.x, lane, 6, 2, car.c); rect(car.x+1, lane+1, 2, 1, '#cfe6ff');
+        if(car.dir>0){ rect(car.x+5, lane+1, 1, 1, '#ffe9a8'); } else { rect(car.x, lane+1, 1, 1, '#ff9d5a'); }
+      }
+
+      for(var lg=0;lg<4;lg++){ var lx=20+lg*36; var a=.12+.08*Math.sin(ts/200+lg); rect(lx-5, 76, 11, 4, 'rgba(242,201,76,'+a.toFixed(3)+')'); rect(lx-1, 79, 3, 1, '#ffd98a'); }
+
+      for(var tw=0;tw<10;tw++){ var tx=(tw*67)%GW, ty=(tw*23)%30; var al=(Math.sin(ts/300+tw*2.4)+1)/2; rect(tx, ty, 1, 1, 'rgba(200,215,235,'+(al*.75).toFixed(3)+')'); }
+
+      requestAnimationFrame(frame);
+    }
+
+    addEventListener('resize', prep);
+    prep();
+    requestAnimationFrame(frame);
+  })();
+  </script>
   <script>
   (function(){
     /* ---------- mostra erros na tela ---------- */
@@ -522,7 +682,7 @@
       const ordem = ['execucao','revisao','analise','backlog'];
       let f='backlog';
       ordem.forEach(function(o){ if(a.some(function(d){return d.fase===o;})) f=o; });
-      const cor = { execucao:0x22d3ee, revisao:0xb197fc, analise:0xf2c94c, backlog:0x8ea3c6 }[f];
+      const cor = { execucao:0x5ea0ff, revisao:0xb197fc, analise:0xf2c94c, backlog:0x8ea3c6 }[f];
       return { cor:cor, ativo: a.some(function(d){return d.fase==='execucao'||d.fase==='revisao'||d.fase==='analise';}), n:a.length };
     }
 
@@ -659,7 +819,7 @@
       for(var i=0;i<comuns.length;i++){ if(p.toLowerCase().indexOf(comuns[i])>=0){ bits=Math.min(bits,24); break; } }
       var score = bits<28?0 : bits<40?1 : bits<56?2 : bits<76?3 : 4;
       var nomes=['Crítica','Fraca','Média','Forte','Excelente'];
-      var cores=['#ff6b6b','#ff8a5c','#f2c94c','#51cf66','#22d3ee'];
+      var cores=['#ff6b6b','#ff8a5c','#f2c94c','#51cf66','#5ea0ff'];
       var pct=Math.min(100, Math.round(bits/80*100));
       var crack = bits<=0?'—' : bits<40?'segundos' : bits<60?'horas' : bits<80?'meses' : 'anos';
       return { score:score, bits:Math.round(bits), forca:nomes[score], cor:cores[score], pct:pct, crack:crack };
@@ -859,9 +1019,9 @@
       controls.target.set(0, 2, 0);
 
       /* ---------- luzes ---------- */
-      scene.add(new THREE.AmbientLight(0x8899cc, .6));
-      const sun = new THREE.DirectionalLight(0xffffff, 1.1); sun.position.set(40, 60, 30); scene.add(sun);
-      const rim = new THREE.PointLight(0x22d3ee, .8, 120); rim.position.set(-40, 10, -50); scene.add(rim);
+      scene.add(new THREE.AmbientLight(0x7f93b8, .65));
+      const sun = new THREE.DirectionalLight(0xdfe8f7, 1.1); sun.position.set(40, 60, 30); scene.add(sun);
+      const rim = new THREE.PointLight(0x5ea0ff, .9, 120); rim.position.set(-40, 10, -50); scene.add(rim);
       const gold = new THREE.PointLight(0xf2c94c, .6, 90); gold.position.set(30, 20, 40); scene.add(gold);
 
       /* ---------- plataformas ---------- */
