@@ -448,19 +448,19 @@ BEGIN
     IF TG_OP = 'UPDATE' AND (NEW.fase IS DISTINCT FROM OLD.fase
                           OR NEW.progresso IS DISTINCT FROM OLD.progresso) THEN
         IF NEW.fase = 'concluida' THEN NEW.progresso := 100; END IF;
-        INSERT INTO historico_demandas (demanda_id, fase_anterior, fase_nova,
+        INSERT INTO kraefegg.historico_demandas (demanda_id, fase_anterior, fase_nova,
                                         progresso_anterior, progresso_novo, agente_autor_id)
         VALUES (NEW.id, OLD.fase, NEW.fase, OLD.progresso, NEW.progresso, NEW.responsavel_id);
         IF NEW.projeto_id IS NOT NULL THEN
-            UPDATE projetos SET progresso = COALESCE((SELECT ROUND(AVG(progresso))
-                                                      FROM demandas WHERE projeto_id = NEW.projeto_id), 0)
+            UPDATE kraefegg.projetos SET progresso = COALESCE((SELECT ROUND(AVG(progresso))
+                                                      FROM kraefegg.demandas WHERE projeto_id = NEW.projeto_id), 0)
             WHERE id = NEW.projeto_id AND status NOT IN ('concluido', 'cancelado');
         END IF;
     ELSIF TG_OP = 'INSERT' THEN
         IF NEW.fase = 'concluida' THEN NEW.progresso := 100; END IF;
         IF NEW.projeto_id IS NOT NULL THEN
-            UPDATE projetos SET progresso = COALESCE((SELECT ROUND(AVG(progresso))
-                                                      FROM demandas WHERE projeto_id = NEW.projeto_id), 0)
+            UPDATE kraefegg.projetos SET progresso = COALESCE((SELECT ROUND(AVG(progresso))
+                                                      FROM kraefegg.demandas WHERE projeto_id = NEW.projeto_id), 0)
             WHERE id = NEW.projeto_id AND status NOT IN ('concluido', 'cancelado');
         END IF;
     END IF;
