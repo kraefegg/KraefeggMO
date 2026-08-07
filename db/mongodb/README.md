@@ -15,7 +15,11 @@ O catálogo (`sites`, `sensores`) existe em ambos: a fonte de verdade é o PG; o
 |---|---|
 | `01-schema.js` | Cria o banco `kraefegg_telemetry`, coleções time-series + validadores `$jsonSchema` e índices |
 | `02-seed.js` | Dados iniciais alinhados ao seed do PG (mesmos sites, sensores, séries e eventos) |
-| `docker-compose.yml` (raiz de `db/`) | Sobe PostgreSQL + MongoDB juntos |
+| `apply-atlas.ps1` | Aplica schema + seed no cluster Atlas (via `MONGODB_URI`) |
+| `atlas-sql.ps1` | Conecta ao endpoint Atlas SQL (read-only) e roda consultas SQL |
+| `sql-examples.js` | Consultas SQL de exemplo (executáveis pelo `atlas-sql.ps1`) |
+| `.env` | Credenciais e URIs (NÃO versionado) |
+| `docker-compose.yml` (raiz de `db/`) | Sobe PostgreSQL + MongoDB locais (Mongo em perfil `local-mongo`) |
 
 ## Coleções
 
@@ -28,6 +32,25 @@ O catálogo (`sites`, `sensores`) existe em ambos: a fonte de verdade é o PG; o
 | `sensores` | regular | Catálogo espelho com índice único `(siteId, codigo)` |
 | `focos` | regular | Focos de queimada INPE (GeoJSON + TTL de 60 dias) |
 | `alertas` | regular | Alertas com severidade (índice `(severidade, criadoEm)`) |
+
+## Acesso SQL (MongoDB Atlas SQL)
+
+O endpoint **Atlas SQL** permite consultar a telemetria com SQL (somente leitura). Endpoint: `atlas-sql-6a75669474243a1807eaaf38-ejwat6.z.query.mongodb.net` (db `kraefegg_telemetry`). A URI base fica em `db/mongodb/.env` → `MONGODB_SQL_URI` (sem credenciais; o script injeta usuário/senha).
+
+```powershell
+.\db\mongodb\atlas-sql.ps1                                   # valida conexão + exemplos
+.\db\mongodb\atlas-sql.ps1 -File .\db\mongodb\sql\meu.js      # arquivo próprio
+```
+
+No mongosh, as consultas SQL são **agregações a nível de banco**:
+
+```js
+db.aggregate([{ $sql: { statement: 'SELECT sensorId, COUNT(*) FROM leituras GROUP BY sensorId', format: 'relaxed' } }])
+```
+
+Exemplos prontos em `sql-examples.js` (leituras por sensor, última leitura, tendência NDVI, focos, alertas, clima). No navegador, o editor SQL do Atlas (Browse → SQL) aceita as mesmas consultas com tabelas = coleções.
+
+> Acesso de escrita continua sendo pelo cluster (`MONGODB_URI` / `apply-atlas.ps1`); o endpoint SQL é read-only.
 
 ## Como rodar
 
