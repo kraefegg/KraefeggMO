@@ -33,12 +33,37 @@
   #hud{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:14px;
     padding:12px 18px;background:linear-gradient(180deg,rgba(7,11,18,.94),rgba(7,11,18,0));
     border-bottom:1px solid var(--linha)}
-  .logo b{font-size:17px;letter-spacing:2px;font-weight:700;
-    background:linear-gradient(180deg,var(--steelC),var(--steelB) 55%,var(--steelA));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    text-shadow:0 0 20px rgba(94,160,255,.28)}
-  .logo b span{color:var(--accent);background:none;-webkit-text-fill-color:var(--accent);
-    text-shadow:0 0 14px rgba(94,160,255,.55)}
+  .logo{display:flex;flex-direction:column;gap:5px}
+
+  /* ---- Placa de identificação: logotipo iluminado ---- */
+  #placa{position:relative;width:258px;height:48px;border-radius:9px;overflow:hidden;
+    background:linear-gradient(180deg,#3d4d68,#1b2334 46%,#28354b);
+    border:1px solid rgba(180,205,235,.38);
+    box-shadow:inset 0 1px 0 rgba(235,245,255,.3),inset 0 -2px 6px rgba(0,0,0,.5),0 6px 22px rgba(0,0,0,.55);
+    animation:placaGlow 3.2s ease-in-out infinite}
+  @keyframes placaGlow{
+    0%,100%{box-shadow:inset 0 1px 0 rgba(235,245,255,.3),inset 0 -2px 6px rgba(0,0,0,.5),0 0 10px rgba(94,160,255,.28),0 6px 22px rgba(0,0,0,.55)}
+    50%{box-shadow:inset 0 1px 0 rgba(235,245,255,.3),inset 0 -2px 6px rgba(0,0,0,.5),0 0 26px rgba(94,160,255,.62),0 6px 22px rgba(0,0,0,.55)}
+  }
+  #placa::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.16) 46%,transparent 62%);
+    background-size:250% 100%;animation:placaVarre 3.6s linear infinite}
+  @keyframes placaVarre{from{background-position:130% 0}to{background-position:-130% 0}}
+  .placa-nome{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:Arial,'Times New Roman',Calibri,sans-serif;font-weight:700;font-size:18px;letter-spacing:5px;
+    color:#fff;text-transform:uppercase;white-space:nowrap;
+    text-shadow:0 0 5px rgba(94,160,255,.95),0 0 13px rgba(94,160,255,.55),0 1px 2px rgba(0,0,0,.6);
+    animation:nomePulso 2.4s ease-in-out infinite}
+  @keyframes nomePulso{
+    0%,100%{text-shadow:0 0 4px rgba(94,160,255,.8),0 0 11px rgba(94,160,255,.45),0 1px 2px rgba(0,0,0,.6)}
+    50%{text-shadow:0 0 9px rgba(94,160,255,1),0 0 22px rgba(94,160,255,.8),0 1px 2px rgba(0,0,0,.6)}
+  }
+  .blb{position:absolute;width:6px;height:6px;border-radius:50%;background:#131a28;
+    box-shadow:inset 0 0 2px rgba(0,0,0,.8);pointer-events:none}
+  .blb::after{content:"";position:absolute;inset:0;border-radius:50%;opacity:0;
+    background:var(--c,#5ea0ff);box-shadow:0 0 7px var(--c,#5ea0ff);
+    animation:blbPisca 1.6s var(--d) infinite}
+  @keyframes blbPisca{0%,38%{opacity:1}55%,100%{opacity:0}}
   .logo .sub{font-size:10px;color:var(--dim);letter-spacing:2px}
   .chips{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
   .chip{background:linear-gradient(180deg,rgba(30,39,58,.9),rgba(18,25,40,.9));
@@ -231,7 +256,7 @@
 
   <div id="hud">
     <div class="logo">
-      <b>HQ <span>KRAEFEGG</span> M.O.</b>
+      <div id="placa"></div>
       <div class="sub">MINERAÇÃO · ENERGIA · ENGENHARIA AMBIENTAL · SISTEMA MULTIAGENTE</div>
     </div>
     <div id="tabs">
@@ -383,6 +408,9 @@
       rect(signX-3, 8, SIGN.length*3+6, 8, 'rgba(94,160,255,'+glow.toFixed(3)+')');
       txt(SIGN, signX, 10, 1, '#cfe6ff');
       txt(SIGN, signX, 10, 1, 'rgba(207,230,255,.35)');
+      var sgL = signX-4, sgR = signX + SIGN.length*3;
+      if(Math.floor(ts/20)%2===0) rect(sgL, 12, 1, 1, '#ff5a5a'); else rect(sgL, 12, 1, 1, '#5affa0');
+      if(Math.floor(ts/20)%2===0) rect(sgR, 12, 1, 1, '#ff5a5a'); else rect(sgR, 12, 1, 1, '#5affa0');
 
       if(Math.floor(ts/28)%2===0) rect(cx, 0, 2, 1, '#ff5a5a');
       if(Math.floor(ts/34)%2===0){ rect(cx-5, 2, 1, 1, '#eef6ff'); rect(cx+4, 2, 1, 1, '#eef6ff'); }
@@ -417,6 +445,22 @@
     addEventListener('resize', prep);
     prep();
     requestAnimationFrame(frame);
+
+    /* ---- Montagem da placa de identificação (logotipo + lâmpadas) ---- */
+    var placa = document.getElementById('placa');
+    if(placa){
+      var nome = document.createElement('b');
+      nome.className = 'placa-nome'; nome.textContent = 'KRAEFEGG M.O.';
+      placa.appendChild(nome);
+      for(var b=0;b<18;b++){
+        var s = document.createElement('i'); s.className = 'blb';
+        s.style.top = (b<9 ? 5 : 37) + 'px';
+        s.style.left = (6 + (b%9)*27) + 'px';
+        s.style.setProperty('--d', (b*0.09) + 's');
+        s.style.setProperty('--c', (b%2 ? '#f2c94c' : '#5ea0ff'));
+        placa.appendChild(s);
+      }
+    }
   })();
   </script>
   <script>
