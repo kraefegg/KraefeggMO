@@ -1,0 +1,27 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "username": "kraefegg",
+  "model": "omniroute/auto/best-coding",
+  "small_model": "omniroute/auto/best-fast",
+  "default_agent": "orchestrator",
+  "provider": {
+    "omniroute": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "OmniRoute",
+      "options": {
+        "baseURL": "http://localhost:20128/v1",
+        "apiKey": "{env:OMNIROUTE_API_KEY}"
+      },
+      "models": {
+        "auto/best-coding": { "name": "auto/best-coding", "reasoning": true, "tool_call": true },
+        "auto/best-reasoning": { "name": "auto/best-reasoning", "reasoning": true, "tool_call": true },
+        "auto/best-fast": { "name": "auto/best-fast", "tool_call": true },
+        "auto/best-chat": { "name": "auto/best-chat", "tool_call": true },
+        "auto/coding": { "name": "auto/coding", "reasoning": true, "tool_call": true },
+        "auto/smart": { "name": "auto/smart", "reasoning": true, "tool_call": true },
+        "auto/cheap": { "name": "auto/cheap", "tool_call": true },
+        "oc/deepseek-v4-flash-free": { "name": "oc/deepseek-v4-flash-free", "tool_call": true }
+      }
+    }
+  }
+}

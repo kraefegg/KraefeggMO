@@ -1,0 +1,16 @@
+# Segredos
+.env
+*.local
+
+# Chaves do OmniRoute
+OMNIROUTE_API_KEY
+
+# Node
+node_modules/
+
+# Banco / dados
+*.sqlite
+*.db
+
+# Logs
+*.log
