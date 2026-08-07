@@ -21,6 +21,9 @@ services:
   mongo:
     image: mongo:7
     container_name: kraefegg-mongo
+    # Perfil "local": só sobe junto com docker compose --profile local up -d
+    # Quando usar MongoDB Atlas (produção), o Mongo local é desnecessário.
+    profiles: ["local-mongo"]
     environment:
       MONGO_INITDB_ROOT_USERNAME: kraefegg
       MONGO_INITDB_ROOT_PASSWORD: kraefegg_dev

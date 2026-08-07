@@ -36,13 +36,13 @@ Camada de dados da empresa em arquitetura **híbrida**, toda **dinâmica** (trig
 ## Como rodar local (Docker)
 
 ```bash
-docker compose up -d
+docker compose up -d                          # PostgreSQL 16 (schema+seed automáticos)
+docker compose --profile local-mongo up -d    # + MongoDB local (opcional; só dev)
 ```
 
-Sobe um PostgreSQL 16 e um MongoDB 7 com schema+seed aplicados automaticamente na primeira inicialização.
-
 **PostgreSQL:** host `localhost:5432` · user `kraefegg` · password `kraefegg_dev` · db `kraefegg`
-**MongoDB:** host `localhost:27017` · user `kraefegg` · password `kraefegg_dev` · db `kraefegg_telemetry`
+
+**MongoDB (produção):** usa o cluster **Atlas** (`cluster0`) — credenciais em `db/mongodb/.env` (não versionado) e aplicação via `db\mongodb\apply-atlas.ps1`. O Mongo local do compose é apenas para dev (`--profile local-mongo`).
 
 ## Como rodar manual (psql)
 

@@ -31,11 +31,23 @@ O catálogo (`sites`, `sensores`) existe em ambos: a fonte de verdade é o PG; o
 
 ## Como rodar
 
-Com o `docker-compose.yml` da raiz de `db/`:
+### MongoDB Atlas (produção/remoto) — recomendado
+
+O cluster Atlas (`cluster0`) é o Mongo oficial da empresa. As credenciais vivem em **`db/mongodb/.env`** (não versionado). Para aplicar schema + seed no Atlas:
+
+```powershell
+.\db\mongodb\apply-atlas.ps1
+```
+
+Pré-requisito: `mongosh` instalado localmente (o `.env` é carregado pelo script automaticamente). O nome do banco remoto é `kraefegg_telemetry` (definido dentro dos scripts, independente da URI).
+
+### Local (dev, sem Atlas)
+
+Com o `docker-compose.yml` da raiz de `db/`, o Mongo local roda em perfil separado:
 
 ```bash
-docker compose up -d
-# subiu também o MongoDB na porta 27017 (user kraefegg / senha kraefegg_dev)
+docker compose up -d                                    # só PostgreSQL
+docker compose --profile local-mongo up -d              # + MongoDB local (localhost:27017)
 ```
 
 Manual (mongosh):
