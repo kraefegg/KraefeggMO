@@ -53,7 +53,8 @@ Empresa de **mineração, energia e engenharia ambiental** estruturada como sist
 ## Infraestrutura
 - **OmniRoute**: gateway de modelos em `localhost:20128` (chave em `OMNIROUTE_API_KEY`).
 - **GitHub**: versionamento e PRs (em configuração).
-- **Oracle Free Tier**: banco de dados transacional (em configuração).
+- **PostgreSQL** (`db/`): banco transacional de produção — schema `kraefegg` com CRM, demandas/projetos, monitoramento/telemetria e financeiro; donos: `data-analytics` e `data-engineering`. Rodar local via `db/docker-compose.yml`.
+- **Oracle Free Tier**: banco transacional alternativo/legado (em configuração).
 - **Databricks**: processamento robusto/Spark (em configuração).
 
 ## Regras gerais

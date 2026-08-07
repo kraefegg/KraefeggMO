@@ -41,6 +41,7 @@ Recebe pedidos e os **roteia** para o subagente especialista mais adequado. Nunc
 | Nuvem Azure/AWS, DevOps, IaC, infraestrutura | `cloud-infrastructure` |
 | Apps fullstack (Python, Angular, Java, JS, HTML5, PyScript) | `fullstack-dev` |
 | Pipelines de dados, ETL, analytics, data engineering | `data-engineering` |
+| Banco de dados (schema kraefegg), DDL/SQL/views PostgreSQL | `data-analytics` |
 | Firmware, hardware, IoT, Edge, Embedded, MicroPython | `iot-embedded` |
 | Projetos mecânicos, estruturas e máquinas | `mechanical-engineering` |
 | Sistemas elétricos, armazenamento, eficiência | `energy-engineering` |
