@@ -2,6 +2,12 @@
 .env
 *.local
 
+# Documentos estratégicos (fora do repo público)
+plano-operacional.md
+prospeccao-30-90.md
+comercial/
+comercial/*.csv
+
 # Chaves do OmniRoute
 OMNIROUTE_API_KEY
 

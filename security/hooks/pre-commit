@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+# Pre-commit hook — Kraefegg M.O.
+# Bloqueia o commit se o auditor de segurança detectar violações.
+# Ativa: copiar para .git/hooks/pre-commit (ou git config core.hooksPath .githooks)
+import subprocess, sys
+r = subprocess.run(
+    [sys.executable, "security/audit_security.py", "--scan-only", "--matrix-only"],
+    cwd=r"C:\Users\MEU PC\OneDrive\Documents\KraefeggMO",
+)
+sys.exit(r.returncode)
