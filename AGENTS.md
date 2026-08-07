@@ -53,7 +53,7 @@ Empresa de **mineração, energia e engenharia ambiental** estruturada como sist
 ## Infraestrutura
 - **OmniRoute**: gateway de modelos em `localhost:20128` (chave em `OMNIROUTE_API_KEY`).
 - **GitHub**: versionamento e PRs (em configuração).
-- **PostgreSQL** (`db/`): banco transacional de produção — schema `kraefegg` com CRM, demandas/projetos, monitoramento/telemetria e financeiro; donos: `data-analytics` e `data-engineering`. Rodar local via `db/docker-compose.yml`.
+- **PostgreSQL + MongoDB** (`db/`): banco transacional de produção (PostgreSQL, schema `kraefegg` — CRM, demandas/projetos, financeiro) + telemetria em time-series (MongoDB, `kraefegg_telemetry` — leituras, NDVI, clima, focos, alertas). Donos: `data-analytics` e `data-engineering`. Rodar local via `db/docker-compose.yml`.
 - **Oracle Free Tier**: banco transacional alternativo/legado (em configuração).
 - **Databricks**: processamento robusto/Spark (em configuração).
 

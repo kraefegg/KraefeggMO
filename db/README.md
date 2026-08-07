@@ -1,13 +1,20 @@
-# Kraefegg M.O. — Banco de Dados (PostgreSQL)
+# Kraefegg M.O. — Camada de Dados (PostgreSQL + MongoDB)
 
-Camada de dados de produção da empresa (CRM, demandas/projetos, monitoramento & telemetria e financeiro). Todo o modelo é **dinâmico**: triggers recalculam progresso, mantêm histórico de fases e geram trilha de auditoria; views executivas alimentam o painel.
+Camada de dados da empresa em arquitetura **híbrida**, toda **dinâmica** (triggers recalculam progresso, views alimentam o painel, time-series guardam a telemetria).
+
+| Sistema | Papel | O que guarda |
+|---|---|---|
+| **PostgreSQL** | Fonte de verdade transacional | CRM, demandas/projetos, sites/sensores (catálogo), financeiro, auditoria |
+| **MongoDB** | Telemetria (hot path) | Leituras de sensores, séries NDVI, clima, focos INPE, alertas |
 
 ## Estrutura
 
 | Arquivo | Conteúdo |
 |---|---|
-| `schema.sql` | DDL completo (enums, 25+ tabelas, funções, triggers e views) no schema `kraefegg` |
-| `seed.sql` | Dados iniciais (37 agentes, 9 áreas, CRM, 12 demandas do HQ, telemetria M1, financeiro) — reexecutável |
+| `schema.sql` | DDL PostgreSQL completo (enums, tabelas, triggers, views) no schema `kraefegg` |
+| `seed.sql` | Dados iniciais do PostgreSQL (37 agentes, CRM, demandas, financeiro) — reexecutável |
+| `mongodb/` | Camada MongoDB de telemetria: `01-schema.js`, `02-seed.js` e README |
+| `docker-compose.yml` | Sobe PostgreSQL 16 + MongoDB 7 com schema/seed automáticos |
 
 ### Domínios modelados
 - **Núcleo** — `areas_departamento`, `agentes`, `fases`
@@ -32,9 +39,10 @@ Camada de dados de produção da empresa (CRM, demandas/projetos, monitoramento 
 docker compose up -d
 ```
 
-Sobe um PostgreSQL 16 com schema+seed aplicados automaticamente na primeira inicialização.
+Sobe um PostgreSQL 16 e um MongoDB 7 com schema+seed aplicados automaticamente na primeira inicialização.
 
-**Conexão:** host `localhost:5432` · user `kraefegg` · password `kraefegg_dev` · db `kraefegg`.
+**PostgreSQL:** host `localhost:5432` · user `kraefegg` · password `kraefegg_dev` · db `kraefegg`
+**MongoDB:** host `localhost:27017` · user `kraefegg` · password `kraefegg_dev` · db `kraefegg_telemetry`
 
 ## Como rodar manual (psql)
 
@@ -77,8 +85,9 @@ SELECT tabela, registro_id, acao, em FROM kraefegg.auditoria ORDER BY em DESC LI
 
 ## Produção (próximos passos)
 
-- **Séries temporais**: particionar `leituras` por `range(instante)` ou adotar TimescaleDB (hypertable + continuous aggregates).
-- **Migrações**: versionar com Flyway/Liquibase em vez de reexecutar o DDL completo.
-- **Backup**: `pg_dump` agendado + `pgBackRest`/PITR quando houver SLA.
-- **Integração**: os agentes de dados (`data-analytics`, `data-engineering`) são os donos desta camada; a API futura expõe as views para o HQ e para o AIO Observatory.
+- **Séries temporais**: no Mongo as leituras/NDVI/clima já usam time-series collections; definir política de retenção (TTL) conforme SLA.
+- **Sincronização híbrida**: escrita de telemetria no Mongo (hot path); batch para o PG (relatórios/auditoria). Catálogo (sites/sensores) com fonte de verdade no PG e espelho no Mongo.
+- **Migrações**: versionar com Flyway/Liquibase (PG) em vez de reexecutar o DDL completo.
+- **Backup**: `pg_dump` + `mongodump` agendados; `pgBackRest`/PITR quando houver SLA.
+- **Integração**: os agentes de dados (`data-analytics`, `data-engineering`) são os donos desta camada; a API futura expõe as views do PG e as agregações do Mongo para o HQ e para o AIO Observatory.
 - **Ambientes**: separar `dev`/`staging`/`prod` (nunca rodar seed em produção).

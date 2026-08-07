@@ -18,5 +18,24 @@ services:
       timeout: 5s
       retries: 5
 
+  mongo:
+    image: mongo:7
+    container_name: kraefegg-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: kraefegg
+      MONGO_INITDB_ROOT_PASSWORD: kraefegg_dev
+      MONGO_INITDB_DATABASE: kraefegg_telemetry
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+      - ./mongodb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   pgdata:
+  mongodata:
