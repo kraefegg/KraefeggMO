@@ -28,6 +28,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+# Saída UTF-8 independente do console (Windows cp1252 etc.)
+for _stream in (sys.stdout, sys.stderr):
+    if _stream and hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (OSError, ValueError):
+            pass
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 AUDIT_LOG = Path(__file__).resolve().parent / "audit_log.jsonl"
 
@@ -62,7 +70,10 @@ MATRIZ_ACESSO: List[Tuple[str, str]] = [
     # Público: divulgável (GitHub Pages, repo aberto)
     ("hq/", "PUBLICO"),
     ("db/", "PUBLICO"),
+    ("docs/", "PUBLICO"),
+    ("rd/", "PUBLICO"),
     (".opencode/", "PUBLICO"),
+    (".github/", "PUBLICO"),
     ("AGENTS.md", "PUBLICO"),
     ("README.md", "PUBLICO"),
     ("deploy-github-pages.ps1", "PUBLICO"),
@@ -72,6 +83,8 @@ MATRIZ_ACESSO: List[Tuple[str, str]] = [
     ("security/audit_security.py", "PUBLICO"),
     ("security/audit_log.jsonl", "PUBLICO"),
     ("security/.env.template", "PUBLICO"),
+    ("security/cofre.py", "PUBLICO"),
+    ("security/databricks.py", "PUBLICO"),
     ("security/hooks/", "PUBLICO"),
 ]
 

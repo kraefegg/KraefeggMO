@@ -4,7 +4,7 @@
 # Ativa: copiar para .git/hooks/pre-commit (ou git config core.hooksPath .githooks)
 import subprocess, sys
 r = subprocess.run(
-    [sys.executable, "security/audit_security.py", "--scan-only", "--matrix-only"],
+    [sys.executable, "security/audit_security.py"],
     cwd=r"C:\Users\MEU PC\OneDrive\Documents\KraefeggMO",
 )
 sys.exit(r.returncode)

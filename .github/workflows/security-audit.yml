@@ -1,0 +1,70 @@
+name: Auditor Online — Segurança & Compliance
+
+# Agente de segurança executando de forma autônoma no GitHub (sem depender do PC local).
+# Roda a cada 2h, manualmente ou a cada push na main.
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: security-audit
+  cancel-in-progress: false
+
+jobs:
+  auditor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Executar auditoria (agente de segurança)
+        id: audit
+        run: |
+          set -o pipefail
+          python security/audit_security.py 2>&1 | tee report.txt
+
+      - name: Registrar trilha de auditoria no repo (online)
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git add security/audit_log.jsonl
+          if git diff --cached --quiet; then
+            echo "Sem alterações na trilha."
+          else
+            git commit -m "security: trilha de auditoria online (GitHub Actions)"
+            git pull --rebase origin main 2>/dev/null || true
+            git push origin main 2>/dev/null && echo "Trilha publicada." || echo "Falha ao publicar trilha (revisar manualmente)."
+          fi
+
+      - name: Abrir issue se auditoria reprovar
+        if: failure()
+        run: |
+          COUNT=$(gh issue list --label "auditoria" --state open --limit 5 --json number -q 'length' 2>/dev/null || echo 0)
+          if [ "$COUNT" = "0" ]; then
+            gh issue create --label "auditoria" \
+              --title "Auditoria de segurança reprovada — ação requerida" \
+              --body "A auditoria automatizada falhou. Resumo:\n\n$(tail -40 report.txt)\n\nVer detalhes no artefato da execução."
+          fi
+
+      - name: Upload relatório
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: auditoria-relatorio
+          path: report.txt
+          if-no-files-found: warn
