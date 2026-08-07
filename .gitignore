@@ -9,11 +9,18 @@ prospeccao-30-90.md
 comercial/
 comercial/*.csv
 
+# Resumos de sessão / anotações locais
+hq/.anchored-summary.md
+
 # Chaves do OmniRoute
 OMNIROUTE_API_KEY
 
 # Node
 node_modules/
+
+# Python
+__pycache__/
+*.pyc
 
 # Banco / dados
 *.sqlite
