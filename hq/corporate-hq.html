@@ -309,6 +309,22 @@
   <script>
   /* ============ Pixel art: construção corporativa KRAEFEGG MO ============ */
   (function(){
+    /* ---- Placa de identificação (logotipo + lâmpadas) montada primeiro ---- */
+    var placa = document.getElementById('placa');
+    if(placa){
+      var nome = document.createElement('b');
+      nome.className = 'placa-nome'; nome.textContent = 'KRAEFEGG M.O.';
+      placa.appendChild(nome);
+      for(var b=0;b<18;b++){
+        var s = document.createElement('i'); s.className = 'blb';
+        s.style.top = (b<9 ? 5 : 37) + 'px';
+        s.style.left = (6 + (b%9)*27) + 'px';
+        s.style.setProperty('--d', (b*0.09) + 's');
+        s.style.setProperty('--c', (b%2 ? '#f2c94c' : '#5ea0ff'));
+        placa.appendChild(s);
+      }
+    }
+
     var cv = document.getElementById('pxbuild');
     if(!cv) return;
     var ctx = cv.getContext('2d'), bg = null;
@@ -319,7 +335,7 @@
       K:['101','110','100','110','101'], R:['110','101','110','101','101'],
       A:['010','101','111','101','101'], E:['111','100','111','100','111'],
       F:['111','100','111','100','100'], G:['011','100','101','101','011'],
-      M:['101','111','111','101','101'], O:['010','101','101','101','010'], ' ':[]
+      M:['101','111','111','101','101'], O:['010','101','101','101','010'], ' ':['000','000','000','000','000']
     };
     var SIGN = 'KRAEFEGG MO';
     var seed = 98765;
@@ -329,7 +345,7 @@
       var sx = x;
       for(var i=0;i<s.length;i++){
         var g = FONT[s[i]];
-        if(g){ for(var r=0;r<5;r++) for(var c=0;c<3;c++) if(g[r][c]==='1'){ ctx.fillStyle=cor; ctx.fillRect(Math.floor((sx+c)*PS*sc), Math.floor((y+r)*PS*sc), PS*sc, PS*sc); } }
+        if(g && g.length){ for(var r=0;r<5;r++) for(var c=0;c<3;c++) if(g[r][c]==='1'){ ctx.fillStyle=cor; ctx.fillRect(Math.floor((sx+c)*PS*sc), Math.floor((y+r)*PS*sc), PS*sc, PS*sc); } }
         sx += 3*sc;
       }
     }
@@ -445,22 +461,6 @@
     addEventListener('resize', prep);
     prep();
     requestAnimationFrame(frame);
-
-    /* ---- Montagem da placa de identificação (logotipo + lâmpadas) ---- */
-    var placa = document.getElementById('placa');
-    if(placa){
-      var nome = document.createElement('b');
-      nome.className = 'placa-nome'; nome.textContent = 'KRAEFEGG M.O.';
-      placa.appendChild(nome);
-      for(var b=0;b<18;b++){
-        var s = document.createElement('i'); s.className = 'blb';
-        s.style.top = (b<9 ? 5 : 37) + 'px';
-        s.style.left = (6 + (b%9)*27) + 'px';
-        s.style.setProperty('--d', (b*0.09) + 's');
-        s.style.setProperty('--c', (b%2 ? '#f2c94c' : '#5ea0ff'));
-        placa.appendChild(s);
-      }
-    }
   })();
   </script>
   <script>
