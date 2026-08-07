@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "author": "Kraefegg M.O. - P&D",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-dht22", "id": "dht", "top": -80, "left": 140, "attrs": { "temperature": "27.4", "humidity": "55" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": -50, "left": 220, "attrs": { "value": "10000" } },
+    { "type": "wokwi-buzzer", "id": "buz", "top": -40, "left": 290, "attrs": {} },
+    { "type": "wokwi-led", "id": "led", "top": -40, "left": 360, "attrs": { "color": "red" } }
+  ],
+  "connections": [
+    ["esp:TX", "$serialMonitor:RX", "", []],
+    ["esp:RX", "$serialMonitor:TX", "", []],
+    ["esp:3V3", "dht:VCC", "red", []],
+    ["esp:GND.1", "dht:GND", "black", []],
+    ["esp:4", "dht:SDA", "yellow", []],
+    ["esp:3V3", "r1:1", "red", []],
+    ["dht:SDA", "r1:2", "yellow", []],
+    ["esp:17", "buz:2", "orange", []],
+    ["esp:GND.2", "buz:1", "black", []],
+    ["esp:2", "led:A", "orange", []],
+    ["esp:GND.2", "led:C", "black", []]
+  ],
+  "dependencies": {}
+}

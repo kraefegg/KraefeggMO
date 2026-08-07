@@ -22,6 +22,9 @@ node_modules/
 __pycache__/
 *.pyc
 
+# Firmware/cache de simulação
+rd/embedded/.cache/
+
 # Banco / dados
 *.sqlite
 *.db

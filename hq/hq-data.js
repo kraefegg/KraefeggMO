@@ -63,6 +63,7 @@ const ORG = {
     // ---- PESQUISA & INOVAÇÃO ----
     { id: "research-scientist", nome: "Pesquisa Científica", role: "Métodos, artigos e P&D", area: "pes", especialidade: "Sensoriamento, estatística" },
     { id: "research-academic", nome: "Pesquisa Avançada", role: "PhDs, médicos e mestres — validação científica", area: "pes", especialidade: "Revisão por pares, laudos" },
+    { id: "research-development", nome: "Pesquisa & Desenvolvimento", role: "Análise de segmentos de mercado, estudo avançado de produto-serviço e deployments", area: "pes", especialidade: "Offshore, mineração, embedded, IoT, Edge AI" },
     // ---- CYBERSEC & CONSULTORIA ----
     { id: "cybersecurity",    nome: "Cybersegurança",    role: "White Hat · Blue Team · Red Team", area: "seg", especialidade: "Pentest, SOC, LGPD/ISO 27001" },
     { id: "consultants",      nome: "Consultoria",       role: "Consultores seniores multidisciplinares", area: "seg", especialidade: "Diagnósticos e pareceres" }
@@ -119,7 +120,16 @@ const DEMANDAS = [
     descricao: 'Painel de gestão no corporate-hq.html: lista por fase, detalhe editável, persistência em localStorage.' },
   { id: 'D-12', titulo: 'Dashboard de geração solar para cliente-piloto',
     area: 'ene', responsavel: 'renewable-energy', fase: 'backlog', prioridade: 'Média', prazo: '22/08', progresso: 0,
-    descricao: 'Séries de geração (Open-Meteo/energia) com economia em tarifa horária e relatório mensal.' }
+    descricao: 'Séries de geração (Open-Meteo/energia) com economia em tarifa horária e relatório mensal.' },
+  { id: 'D-13', titulo: 'P&D — Edge Sensor Ambiental (embedded · IoT · Edge AI) para offshore e mineração',
+    area: 'pes', responsavel: 'research-development', fase: 'execucao', prioridade: 'Alta', prazo: '19/08', progresso: 60,
+    descricao: 'Firmware MicroPython (ESP32) com detecção de anomalia on-device (z-score), simulado no Wokwi; análise de segmentos de mercado e estudo de produto-serviço para lançamento.' },
+  { id: 'D-14', titulo: 'Cofre ENIGMA — isolamento de credenciais e rotação de tokens',
+    area: 'seg', responsavel: 'cybersecurity', fase: 'concluida', prioridade: 'Alta', prazo: '07/08', progresso: 100,
+    descricao: 'Cofre local AES-256-GCM hardware-bound (security/cofre.py), 8 segredos cifrados, backup em texto eliminado, conexão com Databricks OpenSharing validada.' },
+  { id: 'D-15', titulo: 'Documentação do projeto — docs/, diagramas, schemas, linguagens e códigos',
+    area: 'eng', responsavel: 'engineering-dev', fase: 'revisao', prioridade: 'Média', prazo: '08/08', progresso: 85,
+    descricao: 'Estrutura docs/ com arquitetura (Mermaid), deployments, schemas (JSON/SQL) e referência de linguagens do projeto.' }
 ];
 
 // expõe como globais explícitas (const no topo não vira window.X)
