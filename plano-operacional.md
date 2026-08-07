@@ -14,7 +14,7 @@ Empresa de **mineração, energia e engenharia ambiental** operada como sistema 
 | Executivo | `cto` | Arquitetura tecnológica, IoT/Edge, dados, segurança |
 | Executivo | `market-segment` | Posicionamento, precificação, funil do segmento-alvo |
 | Coordenação | `orchestrator` | Roteia pedidos e consolida entregas |
-| Execução | 22 subagentes-departamento | Especialistas por área |
+| Execução | 34 subagentes-departamento | Especialistas por área |
 
 ## 2. Segmento-alvo
 

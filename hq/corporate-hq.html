@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HQ — Kraefegg M.O. · Painel de Gestão 3D</title>
+<style>
+  :root{
+    --bg1:#070a12; --bg2:#0d1322; --panel:rgba(13,19,34,.86);
+    --linha:rgba(120,150,255,.18); --txt:#e8eefc; --dim:#8ea3c6;
+    --accent:#22d3ee; --amber:#f2c94c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:radial-gradient(1200px 700px at 50% 30%,var(--bg2),var(--bg1));color:var(--txt);
+    font-family:'Segoe UI',system-ui,Arial,sans-serif;overflow:hidden}
+  #cena{position:fixed;inset:0;display:block;cursor:grab}
+  #cena:active{cursor:grabbing}
+
+  /* ---- HUD superior ---- */
+  #hud{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:14px;
+    padding:12px 18px;background:linear-gradient(180deg,rgba(7,10,18,.92),rgba(7,10,18,0));
+    border-bottom:1px solid var(--linha)}
+  .logo b{font-size:17px;letter-spacing:1px;color:#fff}
+  .logo b span{color:var(--accent)}
+  .logo .sub{font-size:10px;color:var(--dim);letter-spacing:2px}
+  .chips{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .chip{background:var(--panel);border:1px solid var(--linha);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--dim)}
+  .chip b{display:block;color:#fff;font-size:14px;line-height:1.1}
+  .chip.v b{color:var(--amber)}
+  .chip.a b{color:var(--accent)}
+
+  /* ---- Legenda de áreas ---- */
+  #legend{position:fixed;bottom:14px;left:14px;z-index:10;display:flex;gap:6px;flex-wrap:wrap;max-width:460px}
+  .tag{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--linha);
+    border-radius:999px;padding:5px 11px;font-size:11px;color:var(--dim);cursor:pointer;transition:.15s}
+  .tag .dot{width:9px;height:9px;border-radius:50%}
+  .tag:hover{color:#fff;border-color:var(--accent)}
+  .tag.on{color:#fff;border-color:var(--accent);background:rgba(34,211,238,.12)}
+
+  /* ---- Ajuda / rodapé ---- */
+  #hint{position:fixed;bottom:14px;right:14px;z-index:10;font-size:10px;color:var(--dim);background:var(--panel);
+    border:1px solid var(--linha);padding:6px 10px;border-radius:8px;letter-spacing:.3px;max-width:300px}
+
+  /* ---- Painel de detalhes ---- */
+  #panel{position:fixed;top:78px;right:16px;z-index:10;width:330px;background:var(--panel);border:1px solid var(--linha);
+    border-radius:14px;padding:18px;backdrop-filter:blur(8px);box-shadow:0 18px 50px rgba(0,0,0,.5);
+    transform:translateX(120%);transition:transform .28s cubic-bezier(.2,.9,.3,1)}
+  #panel.open{transform:none}
+  #panel .close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer}
+  #panel .close:hover{color:#fff}
+  #panel .cargo{font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+  #panel h2{font-size:20px;margin:4px 0 2px}
+  #panel .area{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--dim);margin-bottom:10px}
+  #panel .area .dot{width:8px;height:8px;border-radius:50%}
+  #panel .linha{height:1px;background:var(--linha);margin:10px 0}
+  #panel .lbl{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+  #panel .val{font-size:13px;line-height:1.5;margin:2px 0 10px}
+  #panel .btns{display:flex;gap:8px}
+  #panel button{flex:1;border:1px solid var(--accent);background:rgba(34,211,238,.1);color:var(--accent);
+    padding:8px;border-radius:8px;font-size:12px;cursor:pointer;transition:.15s}
+  #panel button:hover{background:rgba(34,211,238,.25)}
+
+  @media (max-width:640px){
+    .logo .sub{display:none}
+    #hint{display:none}
+    #panel{width:86%;right:5%;top:70px}
+  }
+</style>
+</head>
+<body>
+  <canvas id="cena"></canvas>
+
+  <div id="hud">
+    <div class="logo">
+      <b>HQ <span>KRAEFEGG</span> M.O.</b>
+      <div class="sub">MINERAÇÃO · ENERGIA · ENGENHARIA AMBIENTAL · SISTEMA MULTIAGENTE</div>
+    </div>
+    <div class="chips">
+      <div class="chip v"><b id="st_exec">0</b>Executivos</div>
+      <div class="chip"><b id="st_sub">0</b>Subagentes</div>
+      <div class="chip"><b id="st_area">0</b>Áreas</div>
+      <div class="chip a"><b>R$ 15–40 mil</b>Meta 90 dias</div>
+      <div class="chip a"><b>3/8/40</b>Prop/Reun/Contatos</div>
+    </div>
+  </div>
+
+  <div id="legend"></div>
+  <div id="hint">Clique em um agente para ver o detalhe · arraste para orbitar · rolagem para zoom · clique na área para filtrar</div>
+
+  <aside id="panel">
+    <button class="close" onclick="fecharPainel()">✕</button>
+    <div class="cargo" id="p_cargo">Departamento</div>
+    <h2 id="p_nome">—</h2>
+    <div class="area"><span class="dot" id="p_dot"></span><span id="p_area">—</span></div>
+    <div class="lbl">Função</div>
+    <div class="val" id="p_role">—</div>
+    <div class="linha"></div>
+    <div class="lbl">Especialidade</div>
+    <div class="val" id="p_spec">—</div>
+    <div class="linha"></div>
+    <div class="lbl">Modelo</div>
+    <div class="val" id="p_model">—</div>
+    <div class="btns">
+      <button onclick="focar(null)">Focar câmera</button>
+      <button onclick="fecharPainel()">Fechar</button>
+    </div>
+  </aside>
+
+  <script src="hq-data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+  (function(){
+    const ORG2 = ORG; // dados carregados por hq-data.js
+    const areaCor = {};
+    ORG2.areas.forEach(a => areaCor[a.id] = a.cor);
+
+    /* ---------- cena ---------- */
+    const cena = document.getElementById('cena');
+    const renderer = new THREE.WebGLRenderer({ canvas: cena, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x070a12, 90, 230);
+
+    const camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, .5, 500);
+    camera.position.set(0, 34, 92);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.dampingFactor = .08;
+    controls.minDistance = 16; controls.maxDistance = 180;
+    controls.target.set(0, 2, 0);
+
+    /* ---------- luzes ---------- */
+    scene.add(new THREE.AmbientLight(0x8899cc, .6));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.1); sun.position.set(40, 60, 30); scene.add(sun);
+    const rim = new THREE.PointLight(0x22d3ee, .8, 120); rim.position.set(-40, 10, -50); scene.add(rim);
+    const gold = new THREE.PointLight(0xf2c94c, .6, 90); gold.position.set(30, 20, 40); scene.add(gold);
+
+    /* ---------- plataformas ---------- */
+    function disco(r, cor, y, op){
+      const g = new THREE.CylinderGeometry(r, r, 1, 64);
+      const m = new THREE.MeshStandardMaterial({ color: cor, transparent: true, opacity: op, roughness: .9, metalness: .2 });
+      const mesh = new THREE.Mesh(g, m); mesh.position.y = y; mesh.rotation.x = Math.PI/2; return mesh;
+    }
+    scene.add(disco(46, 0x0a0f1c, -2, 1));
+    scene.add(disco(38, 0x111a30, -1.6, .55));
+    scene.add(disco(3.4, 0x1b2a4a, -1.2, .7));
+    const anel = new THREE.Mesh(new THREE.TorusGeometry(5.2, .06, 8, 80),
+      new THREE.MeshStandardMaterial({ color: 0xf2c94c, emissive: 0xf2c94c, emissiveIntensity: .6 }));
+    anel.rotation.x = Math.PI/2; anel.position.y = .4; scene.add(anel);
+
+    /* ---------- helpers: rótulos e avatares ---------- */
+    const staffMeshes = [];
+    function roundRect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+
+    function makeLabel(txt, hex){
+      const cv = document.createElement('canvas'); const c = cv.getContext('2d');
+      const fs = 40; c.font = 'bold '+fs+'px "Segoe UI", Arial, sans-serif';
+      const w = Math.ceil(c.measureText(txt).width) + fs; const h = fs + 26;
+      cv.width = w; cv.height = h;
+      c.font = 'bold '+fs+'px "Segoe UI", Arial, sans-serif';
+      c.fillStyle = 'rgba(8,12,22,.88)'; roundRect(c,0,0,w,h,16); c.fill();
+      c.strokeStyle = '#'+hex.toString(16).padStart(6,'0'); c.lineWidth = 4; roundRect(c,2,2,w-4,h-4,14); c.stroke();
+      c.fillStyle = '#eef2ff'; c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillText(txt, w/2, h/2+2);
+      const tex = new THREE.CanvasTexture(cv);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+      const k = .02; sp.scale.set(w*k, h*k, 1); return sp;
+    }
+
+    function avatar(s, pos, hex){
+      const g = new THREE.SphereGeometry(s, 24, 24);
+      const m = new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: .25, roughness: .4, metalness: .3 });
+      const mesh = new THREE.Mesh(g, m); mesh.position.copy(pos);
+      const pil = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, pos.y-.4, 10),
+        new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: .3, transparent: true, opacity: .5 }));
+      pil.position.y = (pos.y-.4)/2;
+      const grp = new THREE.Group(); grp.add(mesh); grp.add(pil);
+      grp.position.set(pos.x, 0, pos.z);
+      grp.userData = { y: pos.y };
+      // reposiciona avatar e pilar no topo do grupo
+      mesh.position.y = pos.y; pil.position.y = pos.y/2;
+      grp.userData.sph = mesh; grp.userData.base = s;
+      return grp;
+    }
+
+    /* ---------- layout dos agentes ---------- */
+    const areaIdx = {}; ORG2.areas.forEach((a,i)=>areaIdx[a.id]=i);
+    const raioBase = [0, 5, 14, 18.5, 23, 27.5, 32, 36.5, 40.5];
+    const fase = [0, .7, .35, 1.0, .15, .8, .45, .1, .55];
+
+    const staffRoot = new THREE.Group(); scene.add(staffRoot);
+    const byArea = {};
+    ORG2.staff.forEach(s => (byArea[s.area] = byArea[s.area] || []).push(s));
+
+    const selecionados = {};
+    ORG2.staff.forEach(function(s, i){
+      const lista = byArea[s.area];
+      const idx = lista.indexOf(s);
+      const R = raioBase[areaIdx[s.area]];
+      const ang = idx / lista.length * Math.PI * 2 + fase[areaIdx[s.area]];
+      const pos = new THREE.Vector3(Math.cos(ang)*R, 0, Math.sin(ang)*R);
+      const hex = areaCor[s.area];
+      const tam = s.area==='exec' ? 1.0 : (s.area==='orc' ? .85 : .62);
+      const alt = s.area==='exec' ? 3.6 : (s.area==='orc' ? 2.6 : 1.4 + (i%5)*.35);
+
+      const grp = avatar(tam, pos.clone().setY(alt), hex);
+      grp.userData.staff = s;
+      const lbl = makeLabel(s.nome, hex);
+      lbl.position.set(0, alt + 1.7, 0);
+      grp.add(lbl);
+      staffRoot.add(grp);
+      selecionados[s.id] = grp;
+      staffMeshes.push(grp.userData.sph);
+      grp.userData.sph.userData.staff = s;
+      grp.userData.sph.userData.grp = grp;
+    });
+
+    /* ---------- legendas ---------- */
+    const legend = document.getElementById('legend');
+    const legEls = {};
+    ORG2.areas.forEach(a => {
+      const tag = document.createElement('div');
+      tag.className = 'tag on';
+      const n = (byArea[a.id]||[]).length;
+      tag.innerHTML = '<span class="dot" style="background:#'+a.cor.toString(16).padStart(6,'0')+'"></span>'+a.nome+' <i style="opacity:.6">('+n+')</i>';
+      tag.onclick = function(){ filtrar(a.id, tag); };
+      legend.appendChild(tag); legEls[a.id] = tag;
+    });
+
+    let filtroAtivo = null;
+    function filtrar(id, el){
+      if(filtroAtivo === id){ filtroAtivo = null; }
+      else filtroAtivo = id;
+      Object.keys(legEls).forEach(k => legEls[k].classList.toggle('on', filtroAtivo===null || k===filtroAtivo));
+      ORG2.staff.forEach(s => { selecionados[s.id].visible = (filtroAtivo===null || s.area===filtroAtivo); });
+    }
+
+    /* ---------- estatísticas ---------- */
+    const nExec = (byArea.exec||[]).length;
+    document.getElementById('st_exec').textContent = nExec;
+    document.getElementById('st_sub').textContent = ORG2.staff.length - nExec;
+    document.getElementById('st_area').textContent = ORG2.areas.length;
+
+    /* ---------- painel de detalhes ---------- */
+    const panel = document.getElementById('panel');
+    function fecharPainel(){ panel.classList.remove('open'); selecionadoAtual = null; }
+    let selecionadoAtual = null;
+    function mostrar(s, grp){
+      selecionadoAtual = grp;
+      const hex = areaCor[s.area];
+      document.getElementById('p_cargo').textContent = 'Departamento · ' + ORG2.areas.find(a=>a.id===s.area).nome;
+      document.getElementById('p_nome').textContent = s.nome;
+      document.getElementById('p_dot').style.background = '#'+hex.toString(16).padStart(6,'0');
+      document.getElementById('p_area').textContent = ORG2.areas.find(a=>a.id===s.area).nome;
+      document.getElementById('p_role').textContent = s.role;
+      document.getElementById('p_spec').textContent = s.especialidade;
+      const modelo = { exec:'best-reasoning', orc:'best-reasoning' }[s.area] || (s.area==='eng' ? 'best-coding' : 'best-reasoning');
+      document.getElementById('p_model').textContent = 'OmniRoute · ' + modelo;
+      panel.classList.add('open');
+    }
+    window.fecharPainel = fecharPainel;
+
+    /* ---------- foco de câmera ---------- */
+    let alvoFocuso = null;
+    function focar(g){
+      alvoFocuso = g ? g.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,2,6)) : new THREE.Vector3(0,0,8);
+    }
+    window.focar = focar;
+
+    /* ---------- raycast ---------- */
+    const raycaster = new THREE.Raycaster(); const mouse = new THREE.Vector2();
+    let hover = null;
+    function onMove(e){
+      mouse.x = (e.clientX/innerWidth)*2-1; mouse.y = -(e.clientY/innerHeight)*2+1;
+    }
+    function onClick(e){
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(staffMeshes, false);
+      if(hits.length){ const s = hits[0].object.userData.staff; mostrar(s, hits[0].object.userData.grp); }
+      else fecharPainel();
+    }
+    cena.addEventListener('mousemove', onMove);
+    cena.addEventListener('click', onClick);
+
+    /* ---------- animação ---------- */
+    const clock = new THREE.Clock();
+    function animate(){
+      const t = clock.getElapsedTime();
+      anel.rotation.z = t*.15;
+      staffRoot.rotation.y = Math.sin(t*.05)*.05;
+      if(alvoFocuso){
+        controls.target.lerp(alvoFocuso, .06);
+        if(controls.target.distanceTo(alvoFocuso) < .5) alvoFocuso = null;
+      }
+      if(hover) hover.userData.grp.userData.sph.scale.setScalar(1);
+      raycaster.setFromCamera(mouse, camera);
+      const hs = raycaster.intersectObjects(staffMeshes, false);
+      if(hs.length){
+        hover = hs[0].object;
+        hover.userData.grp.userData.sph.scale.setScalar(1.35);
+        cena.style.cursor = 'pointer';
+      } else { hover = null; cena.style.cursor = 'grab'; }
+      controls.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    addEventListener('resize', ()=>{ camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+    animate();
+  })();
+  </script>
+</body>
+</html>

@@ -5,7 +5,8 @@ Empresa de mineração, energia e engenharia ambiental estruturada como sistema 
 ## Arquitetura
 - **3 executivos**: `ceo` (estratégia), `cto` (tecnologia), `market-segment` (segmento de mercado).
 - **1 agente orquestrador** que coordena as entregas.
-- **22 subagentes** especialistas por departamento (engenharia, dados, IA, ambiental, mineração, energia, comercial, financeiro, jurídico, RH, etc.).
+- **34 subagentes** especialistas por departamento (engenharia, dados, IA, ambiental, mineração, energia, comercial, financeiro, jurídico, RH, cibersegurança, automação, nuvem, IoT/Edge, naval, acadêmico, consultoria, etc.).
+- Painel corporativo de gestão em **HQ 3D** (`hq/corporate-hq.html`) com visualização gráfica da empresa e funcionários.
 - Todos os agentes são roteados por modelos de IA através do **OmniRoute** (gateway local).
 
 ## Infraestrutura prevista
