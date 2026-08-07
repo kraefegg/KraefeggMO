@@ -2,6 +2,12 @@
 
 Camada de **séries temporais e eventos** do armazém de dados, em arquitetura **híbrida**:
 
+## Status — VALIDADO EM NUVEM ✅ (ago/2026)
+
+- **Cluster Atlas** `cluster0.mb8812v.mongodb.net`, db `kraefegg_telemetry`: schema+seed aplicados e validados (5 sites, 8 sensores, 152 leituras, 41 séries NDVI, 3 clima, 3 focos, 4 alertas).
+- **Atlas SQL** (read-only): endpoint `atlas-sql-6a75669474243a1807eaaf38-ejwat6.z.query.mongodb.net` validado com 6 consultas (`sql-examples.js`).
+- **Correção na validação**: validador de `sites` passou a aceitar `['string','null']` em `cliente`/`contrato` (rollback do seed evitado no `02-seed.js`).
+
 | Sistema | Papel | O que guarda |
 |---|---|---|
 | **PostgreSQL** (`db/schema.sql`) | Fonte de verdade transacional | CRM, projetos/demandas, sites/sensores (catálogo), financeiro, auditoria |

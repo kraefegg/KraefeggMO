@@ -2,6 +2,19 @@
 
 Camada de dados da empresa em arquitetura **híbrida**, toda **dinâmica** (triggers recalculam progresso, views alimentam o painel, time-series guardam a telemetria).
 
+## Status — VALIDADO EM NUVEM ✅ (ago/2026)
+
+| Sistema | Onde roda | Status |
+|---|---|---|
+| **PostgreSQL (transacional)** | **Supabase** `mrqjmdfulmnggozwjxlq` (db `postgres`, schema `kraefegg`) | ✅ schema+seed aplicados; views validadas (`v_painel_executivo`, `v_demandas_abertas`, 37 agentes, 11 demandas abertas, pipeline R$ 43.000) |
+| **MongoDB (telemetria)** | **Atlas** `cluster0` (`kraefegg_telemetry`) | ✅ schema+seed aplicados (5 sites, 8 sensores, 152 leituras, 41 NDVI, 3 clima, 3 focos, 4 alertas) |
+| **Atlas SQL (BI/read-only)** | Endpoint `atlas-sql-6a75669474243a1807eaaf38-ejwat6` | ✅ consultas SQL validadas (6 exemplos em `mongodb/sql-examples.js`) |
+| **GitHub + Pages** | `kraefegg/KraefeggMO` (público) | ✅ deploy via `deploy-github-pages.ps1` |
+
+> Bugs reais encontrados e corrigidos na validação: `seed.sql` (cast `text`→`indice_espectral` em `series_indices`) e `apply-supabase.ps1` (stderr do psql). Commit `c158e21`.
+
+## Arquitetura
+
 | Sistema | Papel | O que guarda |
 |---|---|---|
 | **PostgreSQL** | Fonte de verdade transacional | CRM, demandas/projetos, sites/sensores (catálogo), financeiro, auditoria |
@@ -63,17 +76,16 @@ Se o PostgreSQL já está instalado como serviço, rode **como Administrador**:
 
 Cria `ROLE`/`DATABASE kraefegg` (senha `kraefegg_dev`), aplica schema+seed e restaura a autenticação original.
 
-### Opção B — PostgreSQL hospedado (Supabase/Neon, sem consumo local)
+### Opção B — PostgreSQL hospedado (Supabase/Neon) — JÁ VALIDADO ✅
 
-Crie um projeto grátis no [Supabase](https://supabase.com) (ou Neon), pegue a connection string
-(pooler ou direta) + senha do banco, e salve em `db/.env`:
+O projeto Supabase atual (`mrqjmdfulmnggozwjxlq`) é o PostgreSQL de produção. A connection string vive em `db/.env` (não versionado):
 
 ```powershell
 # db/.env (não versionado)
-SUPABASE_URI="postgresql://postgres.XXXXX:senha@aws-0-<regiao>.pooler.supabase.com:6543/postgres"
+SUPABASE_URI="postgresql://postgres.XXXXX:senha@db.<ref>.supabase.co:5432/postgres"
 ```
 
-Depois:
+Aplicar/revalidar (idempotente):
 
 ```powershell
 .\db\apply-supabase.ps1
