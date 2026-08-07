@@ -7,7 +7,7 @@
 
 param([string]$Uri)
 
-$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = 'Continue'
 $dir = $PSScriptRoot
 
 if (-not $Uri) {

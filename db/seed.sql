@@ -279,7 +279,7 @@ FROM generate_series('2025-01-01'::date, '2026-07-01'::date, interval '1 month')
 
 -- demais índices continuam modelo (sem export numérico ainda)
 INSERT INTO series_indices (site_id, indice, data, valor, origem, fonte)
-SELECT 2, x.indice, '2026-07-01'::date, x.valor, 'modelo', 'Modelo Kraefegg (sem export numérico)'
+SELECT 2, x.indice::indice_espectral, '2026-07-01'::date, x.valor, 'modelo', 'Modelo Kraefegg (sem export numérico)'
 FROM (VALUES ('ndwi', 0.1800), ('umidade', 0.2200), ('bsi', 0.3000)) AS x(indice, valor);
 
 -- focos de queimada (INPE) e previsão (Open-Meteo)
