@@ -62,8 +62,8 @@ db.createCollection('sites', {
         codigo:      { bsonType: 'string' },
         nome:        { bsonType: 'string' },
         tipo:        { enum: ['estacao_meteorologica', 'parcela_ndvi', 'umidade_solo', 'datalogger_rio'] },
-        cliente:     { bsonType: 'string' },
-        contrato:    { bsonType: 'string' },
+        cliente:     { bsonType: ['string', 'null'] },
+        contrato:    { bsonType: ['string', 'null'] },
         loc: {
           bsonType: 'object',
           required: ['type', 'coordinates'],
