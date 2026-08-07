@@ -16,6 +16,11 @@
   #cena{position:fixed;inset:0;display:block;cursor:grab}
   #cena:active{cursor:grabbing}
 
+  /* ---- Aviso de erro ---- */
+  #aviso{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:30;display:none;
+    background:rgba(255,107,107,.12);border:1px solid #ff6b6b;color:#ffb3b3;font-size:12px;
+    padding:8px 14px;border-radius:8px;max-width:90%;text-align:center}
+
   /* ---- HUD superior ---- */
   #hud{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:14px;
     padding:12px 18px;background:linear-gradient(180deg,rgba(7,10,18,.92),rgba(7,10,18,0));
@@ -44,7 +49,7 @@
   /* ---- Painel de detalhes ---- */
   #panel{position:fixed;top:78px;right:16px;z-index:10;width:330px;background:var(--panel);border:1px solid var(--linha);
     border-radius:14px;padding:18px;backdrop-filter:blur(8px);box-shadow:0 18px 50px rgba(0,0,0,.5);
-    transform:translateX(120%);transition:transform .28s cubic-bezier(.2,.9,.3,1)}
+    transform:translateX(120%);transition:transform .28s cubic-bezier(.2,.9,.3,1);overflow-y:auto;max-height:calc(100vh - 100px)}
   #panel.open{transform:none}
   #panel .close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer}
   #panel .close:hover{color:#fff}
@@ -92,8 +97,6 @@
   .dctrl button{flex:1;min-width:90px;border:1px solid var(--linha);background:rgba(120,150,255,.08);color:var(--txt);
     padding:8px;border-radius:8px;font-size:11px;cursor:pointer;transition:.15s}
   .dctrl button:hover{border-color:var(--accent);background:rgba(34,211,238,.15)}
-  .dctrl button.sav{flex:1 0 100%;border-color:var(--amber);color:var(--amber);background:rgba(242,201,76,.08)}
-  .dctrl button.sav:hover{background:rgba(242,201,76,.2)}
   .dprogress{display:flex;align-items:center;gap:10px;margin:4px 0 12px}
   .dprogress .pbar{flex:1;height:8px;border-radius:5px;background:rgba(120,150,255,.15);overflow:hidden}
   .dprogress .pbar i{display:block;height:100%;background:var(--accent);transition:width .2s}
@@ -115,6 +118,8 @@
 </head>
 <body>
   <canvas id="cena"></canvas>
+
+  <div id="aviso"></div>
 
   <div id="hud">
     <div class="logo">
@@ -153,152 +158,59 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script>
   (function(){
+    /* ---------- mostra erros na tela ---------- */
+    window.addEventListener('error', function(e){
+      var av = document.getElementById('aviso');
+      if(av){ av.style.display = 'block'; av.textContent = '⚠ Erro: ' + (e.message || 'falha desconhecida'); }
+    });
+
     const ORG2 = ORG; // dados carregados por hq-data.js
     const areaCor = {};
     ORG2.areas.forEach(a => areaCor[a.id] = a.cor);
 
-    /* ---------- cena ---------- */
-    const cena = document.getElementById('cena');
-    const renderer = new THREE.WebGLRenderer({ canvas: cena, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(innerWidth, innerHeight);
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x070a12, 90, 230);
+    /* ---------- estado compartilhado (preenchido pelo módulo 3D) ---------- */
+    let selecionados = {};
+    let legEls = {};
+    let filtroAtivo = null;
+    let focar = function(){};
 
-    const camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, .5, 500);
-    camera.position.set(0, 34, 92);
-
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; controls.dampingFactor = .08;
-    controls.minDistance = 16; controls.maxDistance = 180;
-    controls.target.set(0, 2, 0);
-
-    /* ---------- luzes ---------- */
-    scene.add(new THREE.AmbientLight(0x8899cc, .6));
-    const sun = new THREE.DirectionalLight(0xffffff, 1.1); sun.position.set(40, 60, 30); scene.add(sun);
-    const rim = new THREE.PointLight(0x22d3ee, .8, 120); rim.position.set(-40, 10, -50); scene.add(rim);
-    const gold = new THREE.PointLight(0xf2c94c, .6, 90); gold.position.set(30, 20, 40); scene.add(gold);
-
-    /* ---------- plataformas ---------- */
-    function disco(r, cor, y, op){
-      const g = new THREE.CylinderGeometry(r, r, 1, 64);
-      const m = new THREE.MeshStandardMaterial({ color: cor, transparent: true, opacity: op, roughness: .9, metalness: .2 });
-      const mesh = new THREE.Mesh(g, m); mesh.position.y = y; mesh.rotation.x = Math.PI/2; return mesh;
-    }
-    scene.add(disco(46, 0x0a0f1c, -2, 1));
-    scene.add(disco(38, 0x111a30, -1.6, .55));
-    scene.add(disco(3.4, 0x1b2a4a, -1.2, .7));
-    const anel = new THREE.Mesh(new THREE.TorusGeometry(5.2, .06, 8, 80),
-      new THREE.MeshStandardMaterial({ color: 0xf2c94c, emissive: 0xf2c94c, emissiveIntensity: .6 }));
-    anel.rotation.x = Math.PI/2; anel.position.y = .4; scene.add(anel);
-
-    /* ---------- helpers: rótulos e avatares ---------- */
-    const staffMeshes = [];
-    function roundRect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
-
-    function makeLabel(txt, hex){
-      const cv = document.createElement('canvas'); const c = cv.getContext('2d');
-      const fs = 40; c.font = 'bold '+fs+'px "Segoe UI", Arial, sans-serif';
-      const w = Math.ceil(c.measureText(txt).width) + fs; const h = fs + 26;
-      cv.width = w; cv.height = h;
-      c.font = 'bold '+fs+'px "Segoe UI", Arial, sans-serif';
-      c.fillStyle = 'rgba(8,12,22,.88)'; roundRect(c,0,0,w,h,16); c.fill();
-      c.strokeStyle = '#'+hex.toString(16).padStart(6,'0'); c.lineWidth = 4; roundRect(c,2,2,w-4,h-4,14); c.stroke();
-      c.fillStyle = '#eef2ff'; c.textAlign = 'center'; c.textBaseline = 'middle';
-      c.fillText(txt, w/2, h/2+2);
-      const tex = new THREE.CanvasTexture(cv);
-      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
-      const k = .02; sp.scale.set(w*k, h*k, 1); return sp;
-    }
-
-    function avatar(s, pos, hex){
-      const g = new THREE.SphereGeometry(s, 24, 24);
-      const m = new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: .25, roughness: .4, metalness: .3 });
-      const mesh = new THREE.Mesh(g, m); mesh.position.copy(pos);
-      const pil = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, pos.y-.4, 10),
-        new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: .3, transparent: true, opacity: .5 }));
-      pil.position.y = (pos.y-.4)/2;
-      const grp = new THREE.Group(); grp.add(mesh); grp.add(pil);
-      grp.position.set(pos.x, 0, pos.z);
-      grp.userData = { y: pos.y };
-      // reposiciona avatar e pilar no topo do grupo
-      mesh.position.y = pos.y; pil.position.y = pos.y/2;
-      grp.userData.sph = mesh; grp.userData.base = s;
-      return grp;
-    }
-
-    /* ---------- layout dos agentes ---------- */
-    const areaIdx = {}; ORG2.areas.forEach((a,i)=>areaIdx[a.id]=i);
-    const raioBase = [0, 5, 14, 18.5, 23, 27.5, 32, 36.5, 40.5];
-    const fase = [0, .7, .35, 1.0, .15, .8, .45, .1, .55];
-
-    const staffRoot = new THREE.Group(); scene.add(staffRoot);
+    /* ---------- helpers ---------- */
+    function nomeArea(id){ const a = ORG2.areas.find(x=>x.id===id); return a ? a.nome : id; }
+    function hexStr(c){ return '#'+c.toString(16).padStart(6,'0'); }
+    function staffPorId(id){ return ORG2.staff.find(s=>s.id===id); }
     const byArea = {};
     ORG2.staff.forEach(s => (byArea[s.area] = byArea[s.area] || []).push(s));
 
-    const selecionados = {};
-    ORG2.staff.forEach(function(s, i){
-      const lista = byArea[s.area];
-      const idx = lista.indexOf(s);
-      const R = raioBase[areaIdx[s.area]];
-      const ang = idx / lista.length * Math.PI * 2 + fase[areaIdx[s.area]];
-      const pos = new THREE.Vector3(Math.cos(ang)*R, 0, Math.sin(ang)*R);
-      const hex = areaCor[s.area];
-      const tam = s.area==='exec' ? 1.0 : (s.area==='orc' ? .85 : .62);
-      const alt = s.area==='exec' ? 3.6 : (s.area==='orc' ? 2.6 : 1.4 + (i%5)*.35);
-
-      const grp = avatar(tam, pos.clone().setY(alt), hex);
-      grp.userData.staff = s;
-      const lbl = makeLabel(s.nome, hex);
-      lbl.position.set(0, alt + 1.7, 0);
-      grp.add(lbl);
-      staffRoot.add(grp);
-      selecionados[s.id] = grp;
-      staffMeshes.push(grp.userData.sph);
-      grp.userData.sph.userData.staff = s;
-      grp.userData.sph.userData.grp = grp;
-    });
+    /* ---------- estatísticas ---------- */
+    document.getElementById('st_exec').textContent = (byArea.exec||[]).length;
+    document.getElementById('st_sub').textContent = ORG2.staff.length - (byArea.exec||[]).length;
+    document.getElementById('st_area').textContent = ORG2.areas.length;
 
     /* ---------- legendas ---------- */
     const legend = document.getElementById('legend');
-    const legEls = {};
     ORG2.areas.forEach(a => {
       const tag = document.createElement('div');
       tag.className = 'tag on';
       const n = (byArea[a.id]||[]).length;
-      tag.innerHTML = '<span class="dot" style="background:#'+a.cor.toString(16).padStart(6,'0')+'"></span>'+a.nome+' <i style="opacity:.6">('+n+')</i>';
-      tag.onclick = function(){ filtrar(a.id, tag); };
+      tag.innerHTML = '<span class="dot" style="background:'+hexStr(a.cor)+'"></span>'+a.nome+' <i style="opacity:.6">('+n+')</i>';
+      tag.onclick = function(){ filtrar(a.id); };
       legend.appendChild(tag); legEls[a.id] = tag;
     });
-
-    let filtroAtivo = null;
-    function filtrar(id, el){
-      if(filtroAtivo === id){ filtroAtivo = null; }
-      else filtroAtivo = id;
+    function filtrar(id){
+      filtroAtivo = (filtroAtivo === id) ? null : id;
       Object.keys(legEls).forEach(k => legEls[k].classList.toggle('on', filtroAtivo===null || k===filtroAtivo));
-      ORG2.staff.forEach(s => { selecionados[s.id].visible = (filtroAtivo===null || s.area===filtroAtivo); });
+      ORG2.staff.forEach(s => { if(selecionados[s.id]) selecionados[s.id].visible = (filtroAtivo===null || s.area===filtroAtivo); });
     }
-
-    /* ---------- estatísticas ---------- */
-    const nExec = (byArea.exec||[]).length;
-    document.getElementById('st_exec').textContent = nExec;
-    document.getElementById('st_sub').textContent = ORG2.staff.length - nExec;
-    document.getElementById('st_area').textContent = ORG2.areas.length;
 
     /* ---------- painel de detalhes (dinâmico) ---------- */
     const panel = document.getElementById('panel');
     const pc = document.getElementById('p_conteudo');
-    let selecionadoAtual = null;
     let selecionadaDem = null;
-    function fecharPainel(){ panel.classList.remove('open'); selecionadoAtual = null; selecionadaDem = null; }
+    function fecharPainel(){ panel.classList.remove('open'); selecionadaDem = null; }
     window.fecharPainel = fecharPainel;
 
-    function nomeArea(id){ const a = ORG2.areas.find(x=>x.id===id); return a ? a.nome : id; }
-    function hexStr(c){ return '#'+c.toString(16).padStart(6,'0'); }
-    function staffPorId(id){ return ORG2.staff.find(s=>s.id===id); }
-
     function mostrar(s, grp){
-      selecionadoAtual = grp; selecionadaDem = null;
+      selecionadaDem = null;
       const hex = areaCor[s.area];
       const modelo = { exec:'best-reasoning', orc:'best-reasoning' }[s.area] || (s.area==='eng' ? 'best-coding' : 'best-reasoning');
       const minhas = DEMANDAS.filter(d=>d.responsavel===s.id && d.fase!=='concluida');
@@ -322,16 +234,21 @@
     }
 
     /* ---------- módulo de demandas & atividades ---------- */
-    const FASES = window.FASES;
-    const DEMANDAS = window.DEMANDAS;
+    const FASES = window.FASES || [];
+    const DEMANDAS = window.DEMANDAS || [];
+    const faseInfo = {};
+    FASES.forEach(f => faseInfo[f.id] = f);
     const LS_KEY = 'kraefegg_hq_demandas';
     let salvo = {};
     try { salvo = JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e){}
     function grava(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(salvo)); }catch(e){} }
-    DEMANDAS.forEach(d => { const o = salvo[d.id]; if(o){ d.fase = o.fase; d.progresso = o.progresso; } });
+    DEMANDAS.forEach(d => {
+      if(!faseInfo[d.fase]) d.fase = 'backlog';
+      if(typeof d.progresso !== 'number') d.progresso = 0;
+      const o = salvo[d.id];
+      if(o && faseInfo[o.fase] && typeof o.progresso === 'number'){ d.fase = o.fase; d.progresso = o.progresso; }
+    });
 
-    const faseInfo = {};
-    FASES.forEach(f => faseInfo[f.id] = f);
     const dlist = document.getElementById('dem_lista');
     const dfilt = document.getElementById('dem_filtros');
     const dtotal = document.getElementById('dem_total');
@@ -344,7 +261,7 @@
     function prioCor(p){ return p==='Alta' ? '#ff6b6b' : p==='Média' ? '#f2c94c' : '#8ea3c6'; }
     function cardDem(d){
       const s = staffPorId(d.responsavel);
-      const cor = corArea(d.area);
+      const cor = areaCor[d.area] || 0x8ea3c6;
       return '<div class="dcard" onclick="abrirDemanda(\''+d.id+'\')">'+
         '<div class="tt">'+d.titulo+'</div>'+
         '<div class="meta">'+
@@ -382,13 +299,13 @@
 
     function abrirDemanda(id){
       const d = DEMANDAS.find(x=>x.id===id); if(!d) return;
-      selecionadaDem = d; selecionadoAtual = null;
+      selecionadaDem = d;
       const s = staffPorId(d.responsavel);
       const idx = FASES.findIndex(x=>x.id===d.fase);
       pc.innerHTML =
         '<div class="cargo">Demanda '+d.id+'</div>'+
         '<h2>'+d.titulo+'</h2>'+
-        '<div class="area"><span class="dot" style="background:'+hexStr(corArea(d.area))+'"></span>'+nomeArea(d.area)+'</div>'+
+        '<div class="area"><span class="dot" style="background:'+hexStr(areaCor[d.area]||0x8ea3c6)+'"></span>'+nomeArea(d.area)+'</div>'+
         '<div class="meta" style="margin:0 0 4px">'+faseBadge(d.fase)+'</div>'+
         '<div class="linha"></div>'+
         '<div class="lbl">Fase</div>'+
@@ -439,9 +356,12 @@
       if(p===100) selecionadaDem.fase = 'concluida';
       salvo[selecionadaDem.id] = { fase: selecionadaDem.fase, progresso: selecionadaDem.progresso };
       grava();
-      document.getElementById('dp_bar').style.width = p+'%';
-      document.getElementById('dp_val').textContent = p+'%';
-      document.getElementById('dp_num').textContent = p+'%';
+      const b1 = document.getElementById('dp_bar');
+      const b2 = document.getElementById('dp_val');
+      const b3 = document.getElementById('dp_num');
+      if(b1) b1.style.width = p+'%';
+      if(b2) b2.textContent = p+'%';
+      if(b3) b3.textContent = p+'%';
       renderDemandas();
     }
     window.mudarProgresso = mudarProgresso;
@@ -452,8 +372,8 @@
       setModo('equipe');
       filtroAtivo = s.area;
       Object.keys(legEls).forEach(k => legEls[k].classList.toggle('on', k===filtroAtivo));
-      ORG2.staff.forEach(x => { selecionados[x.id].visible = (x.area===filtroAtivo); });
-      focar(selecionados[s.id]);
+      ORG2.staff.forEach(x => { if(selecionados[x.id]) selecionados[x.id].visible = (x.area===filtroAtivo); });
+      if(selecionados[s.id]) focar(selecionados[s.id]);
     }
     window.verNoMapa = verNoMapa;
 
@@ -465,53 +385,162 @@
       document.getElementById('hint').style.display = m==='equipe' ? '' : 'none';
       if(m==='equipe') fecharPainel();
     };
-
-    /* ---------- foco de câmera ---------- */
-    let alvoFocuso = null;
-    function focar(g){
-      alvoFocuso = g ? g.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,2,6)) : new THREE.Vector3(0,0,8);
-    }
     window.focar = focar;
 
-    /* ---------- raycast ---------- */
-    const raycaster = new THREE.Raycaster(); const mouse = new THREE.Vector2();
-    let hover = null;
-    function onMove(e){
-      mouse.x = (e.clientX/innerWidth)*2-1; mouse.y = -(e.clientY/innerHeight)*2+1;
-    }
-    function onClick(e){
-      raycaster.setFromCamera(mouse, camera);
-      const hits = raycaster.intersectObjects(staffMeshes, false);
-      if(hits.length){ const s = hits[0].object.userData.staff; mostrar(s, hits[0].object.userData.grp); }
-      else fecharPainel();
-    }
-    cena.addEventListener('mousemove', onMove);
-    cena.addEventListener('click', onClick);
+    /* ---------- cena 3D (falha controlada: DOM acima continua funcionando) ---------- */
+    try {
+      if(typeof THREE === 'undefined') throw new Error('three.js não carregou (sem conexão/bloqueio de CDN?)');
 
-    /* ---------- animação ---------- */
-    const clock = new THREE.Clock();
-    function animate(){
-      const t = clock.getElapsedTime();
-      anel.rotation.z = t*.15;
-      staffRoot.rotation.y = Math.sin(t*.05)*.05;
-      if(alvoFocuso){
-        controls.target.lerp(alvoFocuso, .06);
-        if(controls.target.distanceTo(alvoFocuso) < .5) alvoFocuso = null;
+      const cena = document.getElementById('cena');
+      const renderer = new THREE.WebGLRenderer({ canvas: cena, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setSize(innerWidth, innerHeight);
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.Fog(0x070a12, 90, 230);
+
+      const camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, .5, 500);
+      camera.position.set(0, 34, 92);
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true; controls.dampingFactor = .08;
+      controls.minDistance = 16; controls.maxDistance = 180;
+      controls.target.set(0, 2, 0);
+
+      /* ---------- luzes ---------- */
+      scene.add(new THREE.AmbientLight(0x8899cc, .6));
+      const sun = new THREE.DirectionalLight(0xffffff, 1.1); sun.position.set(40, 60, 30); scene.add(sun);
+      const rim = new THREE.PointLight(0x22d3ee, .8, 120); rim.position.set(-40, 10, -50); scene.add(rim);
+      const gold = new THREE.PointLight(0xf2c94c, .6, 90); gold.position.set(30, 20, 40); scene.add(gold);
+
+      /* ---------- plataformas ---------- */
+      function disco(r, cor, y, op){
+        const g = new THREE.CylinderGeometry(r, r, 1, 64);
+        const m = new THREE.MeshStandardMaterial({ color: cor, transparent: true, opacity: op, roughness: .9, metalness: .2 });
+        const mesh = new THREE.Mesh(g, m); mesh.position.y = y; mesh.rotation.x = Math.PI/2; return mesh;
       }
-      if(hover) hover.userData.grp.userData.sph.scale.setScalar(1);
-      raycaster.setFromCamera(mouse, camera);
-      const hs = raycaster.intersectObjects(staffMeshes, false);
-      if(hs.length){
-        hover = hs[0].object;
-        hover.userData.grp.userData.sph.scale.setScalar(1.35);
-        cena.style.cursor = 'pointer';
-      } else { hover = null; cena.style.cursor = 'grab'; }
-      controls.update();
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+      scene.add(disco(46, 0x0a0f1c, -2, 1));
+      scene.add(disco(38, 0x111a30, -1.6, .55));
+      scene.add(disco(3.4, 0x1b2a4a, -1.2, .7));
+      const anel = new THREE.Mesh(new THREE.TorusGeometry(5.2, .06, 8, 80),
+        new THREE.MeshStandardMaterial({ color: 0xf2c94c, emissive: 0xf2c94c, emissiveIntensity: .6 }));
+      anel.rotation.x = Math.PI/2; anel.position.y = .4; scene.add(anel);
+
+      /* ---------- helpers: rótulos e avatares ---------- */
+      const staffMeshes = [];
+      function roundRect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+
+      function makeLabel(txt, hex){
+        const cv = document.createElement('canvas'); const c = cv.getContext('2d');
+        const fs = 40; c.font = 'bold '+fs+'px "Segoe UI", Arial, sans-serif';
+        const w = Math.ceil(c.measureText(txt).width) + fs; const h = fs + 26;
+        cv.width = w; cv.height = h;
+        c.font = 'bold '+fs+'px "Segoe UI", Arial, sans-serif';
+        c.fillStyle = 'rgba(8,12,22,.88)'; roundRect(c,0,0,w,h,16); c.fill();
+        c.strokeStyle = '#'+hex.toString(16).padStart(6,'0'); c.lineWidth = 4; roundRect(c,2,2,w-4,h-4,14); c.stroke();
+        c.fillStyle = '#eef2ff'; c.textAlign = 'center'; c.textBaseline = 'middle';
+        c.fillText(txt, w/2, h/2+2);
+        const tex = new THREE.CanvasTexture(cv);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+        const k = .02; sp.scale.set(w*k, h*k, 1); return sp;
+      }
+
+      function avatar(s, pos, hex){
+        const g = new THREE.SphereGeometry(s, 24, 24);
+        const m = new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: .25, roughness: .4, metalness: .3 });
+        const mesh = new THREE.Mesh(g, m); mesh.position.copy(pos);
+        const pil = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, pos.y-.4, 10),
+          new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: .3, transparent: true, opacity: .5 }));
+        pil.position.y = (pos.y-.4)/2;
+        const grp = new THREE.Group(); grp.add(mesh); grp.add(pil);
+        grp.position.set(pos.x, 0, pos.z);
+        grp.userData = { y: pos.y };
+        mesh.position.y = pos.y; pil.position.y = pos.y/2;
+        grp.userData.sph = mesh; grp.userData.base = s;
+        return grp;
+      }
+
+      /* ---------- layout dos agentes ---------- */
+      const areaIdx = {}; ORG2.areas.forEach((a,i)=>areaIdx[a.id]=i);
+      const raioBase = [0, 5, 14, 18.5, 23, 27.5, 32, 36.5, 40.5];
+      const faseAng = [0, .7, .35, 1.0, .15, .8, .45, .1, .55];
+
+      const staffRoot = new THREE.Group(); scene.add(staffRoot);
+
+      ORG2.staff.forEach(function(s, i){
+        const lista = byArea[s.area];
+        const idx = lista.indexOf(s);
+        const R = raioBase[areaIdx[s.area]];
+        const ang = idx / lista.length * Math.PI * 2 + faseAng[areaIdx[s.area]];
+        const pos = new THREE.Vector3(Math.cos(ang)*R, 0, Math.sin(ang)*R);
+        const hex = areaCor[s.area];
+        const tam = s.area==='exec' ? 1.0 : (s.area==='orc' ? .85 : .62);
+        const alt = s.area==='exec' ? 3.6 : (s.area==='orc' ? 2.6 : 1.4 + (i%5)*.35);
+
+        const grp = avatar(tam, pos.clone().setY(alt), hex);
+        grp.userData.staff = s;
+        const lbl = makeLabel(s.nome, hex);
+        lbl.position.set(0, alt + 1.7, 0);
+        grp.add(lbl);
+        staffRoot.add(grp);
+        selecionados[s.id] = grp;
+        staffMeshes.push(grp.userData.sph);
+        grp.userData.sph.userData.staff = s;
+        grp.userData.sph.userData.grp = grp;
+      });
+
+      /* ---------- foco de câmera ---------- */
+      let alvoFocuso = null;
+      focar = function(g){
+        alvoFocuso = g ? g.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,2,6)) : new THREE.Vector3(0,0,8);
+      };
+      window.focar = focar;
+
+      /* ---------- raycast ---------- */
+      const raycaster = new THREE.Raycaster(); const mouse = new THREE.Vector2();
+      let hover = null;
+      function onMove(e){
+        mouse.x = (e.clientX/innerWidth)*2-1; mouse.y = -(e.clientY/innerHeight)*2+1;
+      }
+      function onClick(e){
+        raycaster.setFromCamera(mouse, camera);
+        const hits = raycaster.intersectObjects(staffMeshes, false);
+        if(hits.length){ const s = hits[0].object.userData.staff; mostrar(s, hits[0].object.userData.grp); }
+        else fecharPainel();
+      }
+      cena.addEventListener('mousemove', onMove);
+      cena.addEventListener('click', onClick);
+
+      /* ---------- animação ---------- */
+      const clock = new THREE.Clock();
+      function animate(){
+        const t = clock.getElapsedTime();
+        anel.rotation.z = t*.15;
+        staffRoot.rotation.y = Math.sin(t*.05)*.05;
+        if(alvoFocuso){
+          controls.target.lerp(alvoFocuso, .06);
+          if(controls.target.distanceTo(alvoFocuso) < .5) alvoFocuso = null;
+        }
+        if(hover) hover.userData.grp.userData.sph.scale.setScalar(1);
+        raycaster.setFromCamera(mouse, camera);
+        const hs = raycaster.intersectObjects(staffMeshes, false);
+        if(hs.length){
+          hover = hs[0].object;
+          hover.userData.grp.userData.sph.scale.setScalar(1.35);
+          cena.style.cursor = 'pointer';
+        } else { hover = null; cena.style.cursor = 'grab'; }
+        controls.update();
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+      addEventListener('resize', ()=>{ camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+      animate();
+    } catch(e){
+      const av = document.getElementById('aviso');
+      if(av){ av.style.display = 'block'; av.textContent = '3D indisponível: ' + e.message + ' — usando modo lista.'; }
+      const te = document.getElementById('tab_equipe');
+      if(te) te.style.display = 'none';
+      window.setModo('demandas');
     }
-    addEventListener('resize', ()=>{ camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
-    animate();
   })();
   </script>
 </body>
