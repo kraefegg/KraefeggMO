@@ -1,6 +1,7 @@
 # Segredos
 .env
 *.local
+security/segredos/
 
 # Documentos estratégicos (fora do repo público)
 plano-operacional.md

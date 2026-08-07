@@ -69,6 +69,10 @@ MATRIZ_ACESSO: List[Tuple[str, str]] = [
     ("opencode.json", "PUBLICO"),
     (".gitignore", "PUBLICO"),
     (".gitattributes", "PUBLICO"),
+    ("security/audit_security.py", "PUBLICO"),
+    ("security/audit_log.jsonl", "PUBLICO"),
+    ("security/.env.template", "PUBLICO"),
+    ("security/hooks/", "PUBLICO"),
 ]
 
 # Nível máximo permitido versionado no repo público
