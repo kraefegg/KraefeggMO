@@ -106,6 +106,52 @@
   .stepper button:hover{background:rgba(34,211,238,.15)}
   .stepper span{font-size:12px;min-width:34px;text-align:center}
 
+  /* ---- Cowork: sala de operações isométrica ---- */
+  #cowork{position:fixed;inset:0;z-index:8;display:none;overflow:hidden;
+    background:radial-gradient(900px 600px at 50% 45%,rgba(13,19,34,.25),rgba(7,10,18,.92))}
+  #cowork.open{display:block}
+  .co-corners{position:absolute;inset:70px 16px 56px;pointer-events:none}
+  .co-corners i{position:absolute;width:26px;height:26px;border:2px solid rgba(34,211,238,.5)}
+  .co-corners .tl{top:0;left:0;border-right:none;border-bottom:none}
+  .co-corners .tr{top:0;right:0;border-left:none;border-bottom:none}
+  .co-corners .bl{bottom:0;left:0;border-right:none;border-top:none}
+  .co-corners .br{bottom:0;right:0;border-left:none;border-top:none}
+  #co-grid{position:absolute;inset:0;background-image:
+    linear-gradient(30deg,rgba(120,150,255,.08) 12%,transparent 12.5%,transparent 87%,rgba(120,150,255,.08) 87.5%),
+    linear-gradient(150deg,rgba(120,150,255,.08) 12%,transparent 12.5%,transparent 87%,rgba(120,150,255,.08) 87.5%),
+    linear-gradient(90deg,rgba(120,150,255,.06) 12%,transparent 12.5%,transparent 87%,rgba(120,150,255,.06) 87.5%);
+    background-size:90px 156px;opacity:.6;pointer-events:none}
+  #co-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  #co-nodes{position:absolute;inset:0;pointer-events:none}
+  .co-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;pointer-events:auto;cursor:pointer;user-select:none;z-index:2}
+  .co-node:hover .co-ava{transform:scale(1.15)}
+  .co-node:hover .co-nome{color:#fff}
+  .co-ava{width:44px;height:44px;border-radius:50%;position:relative;transition:transform .15s;
+    background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.25),transparent 60%),var(--co);
+    box-shadow:0 0 14px var(--co),inset 0 0 0 2px rgba(255,255,255,.18)}
+  .co-ava::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px dashed rgba(120,150,255,.45);animation:co-orbit 8s linear infinite}
+  .co-node.ativo .co-ava{box-shadow:0 0 22px var(--co)}
+  .co-node.ativo .co-ava::after{border-color:var(--co);animation-duration:3s}
+  @keyframes co-orbit{to{transform:rotate(360deg)}}
+  .co-nome{font-size:10px;color:var(--dim);margin-top:4px;text-align:center;max-width:84px;line-height:1.1;letter-spacing:.2px;transition:color .15s}
+  .co-nome b{display:block;color:#e8eefc;font-size:11px;font-weight:600}
+  .co-badge{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:8px;background:var(--accent);color:#042;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 3px}
+  .co-main .co-ava{width:60px;height:60px;border:2px solid var(--amber);box-shadow:0 0 30px rgba(242,201,76,.45)}
+  .co-main .co-nome{font-size:12px}
+  .co-main .co-nome b{font-size:13px;color:var(--amber)}
+  #co-ticker{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:12;background:var(--panel);
+    border:1px solid var(--linha);border-radius:999px;padding:7px 16px;font-size:11px;color:var(--dim);
+    display:flex;align-items:center;gap:8px;max-width:92%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #co-ticker .tdot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none;animation:co-blink 1.2s infinite}
+  @keyframes co-blink{50%{opacity:.25}}
+  #co-status{position:fixed;right:16px;top:70px;z-index:12;font-size:10px;color:var(--dim);text-align:right;letter-spacing:.5px}
+  #co-status b{display:block;font-size:14px;color:var(--accent)}
+  .co-legend{position:fixed;left:16px;bottom:50px;z-index:12;display:flex;flex-direction:column;gap:4px;font-size:10px;color:var(--dim)}
+  .co-legend span{display:flex;align-items:center;gap:6px}
+  .co-legend i{width:8px;height:8px;border-radius:50%;flex:none}
+  .co-beam{stroke-dasharray:6 10;animation:co-dash 1.2s linear infinite}
+  @keyframes co-dash{to{stroke-dashoffset:-16}}
+
   @media (max-width:640px){
     .logo .sub{display:none}
     #hint{display:none}
@@ -113,6 +159,10 @@
     #demandas{width:100%}
     #tabs{order:3;width:100%}
     #tabs button{flex:1}
+    #co-status{display:none}
+    .co-legend{display:none}
+    #co-ticker{font-size:10px;bottom:10px;left:5%;transform:none;max-width:90%}
+    .co-corners{inset:70px 8px 48px}
   }
 </style>
 </head>
@@ -129,6 +179,7 @@
     <div id="tabs">
       <button id="tab_equipe" class="on" onclick="setModo('equipe')">Equipe 3D</button>
       <button id="tab_demanda" onclick="setModo('demandas')">Demandas</button>
+      <button id="tab_cowork" onclick="setModo('cowork')">Cowork</button>
     </div>
     <div class="chips">
       <div class="chip v"><b id="st_exec">0</b>Executivos</div>
@@ -152,6 +203,16 @@
     <div class="df" id="dem_filtros"></div>
     <div id="dem_lista"></div>
   </aside>
+
+  <div id="cowork">
+    <div class="co-corners"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></div>
+    <div id="co-grid"></div>
+    <svg id="co-svg"></svg>
+    <div id="co-nodes"></div>
+    <div id="co-status"><b id="co-online">0</b>SUBAGENTES EM ATIVIDADE</div>
+    <div class="co-legend" id="co-legend"></div>
+    <div id="co-ticker"><span class="tdot"></span><span id="co-txt">COWORK · SALA DE OPERAÇÕES</span></div>
+  </div>
 
   <script src="hq-data.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
@@ -380,12 +441,149 @@
     window.setModo = function(m){
       document.getElementById('tab_equipe').classList.toggle('on', m==='equipe');
       document.getElementById('tab_demanda').classList.toggle('on', m==='demandas');
+      document.getElementById('tab_cowork').classList.toggle('on', m==='cowork');
       document.getElementById('demandas').classList.toggle('open', m==='demandas');
+      document.getElementById('cowork').classList.toggle('open', m==='cowork');
       document.getElementById('legend').style.display = m==='equipe' ? '' : 'none';
       document.getElementById('hint').style.display = m==='equipe' ? '' : 'none';
+      if(m==='cowork'){ if(typeof buildCowork==='function'){ buildCowork(); startCoworkTicker(); } }
+      if(m!=='cowork') stopCoworkTicker();
       if(m==='equipe') fecharPainel();
     };
     window.focar = focar;
+
+    /* ---------- cowork: sala de operações isométrica ---------- */
+    const cowork = document.getElementById('cowork');
+    const coSvg = document.getElementById('co-svg');
+    const coNodes = document.getElementById('co-nodes');
+    const coTxt = document.getElementById('co-txt');
+    const coOnline = document.getElementById('co-online');
+    const coLegend = document.getElementById('co-legend');
+    let coworkTimer = null;
+
+    const AGENTS_URL = 'http://localhost:20128/v1/agents';
+    const MAIN_ID = 'orchestrator';
+
+    function faseCorHex(id){ return faseInfo[id] ? faseInfo[id].cor : '#8ea3c6'; }
+    function layoutCowork(){
+      const w = innerWidth, h = innerHeight;
+      const cx = w/2, cy = h*0.46;
+      const s = Math.min(w/1080, h/800, 1.15);
+      return {cx:cx, cy:cy, s:s};
+    }
+    function statusAgente(id){
+      const a = DEMANDAS.filter(function(d){ return d.responsavel===id && d.fase!=='concluida'; });
+      if(!a.length) return { cor:0x51cf66, ativo:false, n:0 };
+      const ordem = ['execucao','revisao','analise','backlog'];
+      let f='backlog';
+      ordem.forEach(function(o){ if(a.some(function(d){return d.fase===o;})) f=o; });
+      const cor = { execucao:0x22d3ee, revisao:0xb197fc, analise:0xf2c94c, backlog:0x8ea3c6 }[f];
+      return { cor:cor, ativo: a.some(function(d){return d.fase==='execucao'||d.fase==='revisao'||d.fase==='analise';}), n:a.length };
+    }
+
+    function buildCowork(){
+      coNodes.innerHTML=''; coSvg.innerHTML='';
+      const {cx:cx, cy:cy, s:s} = layoutCowork();
+      const aneis = { exec:60, orc:0, eng:110, amb:175, min:240, ene:305, com:370, pes:430, seg:485 };
+      const faseAng = { exec:0, orc:0, eng:.35, amb:1.0, min:.15, ene:.8, com:.45, pes:.1, seg:.55 };
+      const mundo = {};
+      ORG2.staff.forEach(function(st){
+        const lista = byArea[st.area]; const idx = lista.indexOf(st);
+        const R = aneis[st.area]||200;
+        const ang = R===0 ? 0 : (idx/lista.length*Math.PI*2 + (faseAng[st.area]||0));
+        const wx = Math.cos(ang)*R, wz = Math.sin(ang)*R;
+        mundo[st.id] = { x:(wx-wz)*.866*s+cx, y:(wx+wz)*.5*s+cy, wx:wx, wz:wz };
+      });
+      const NS = 'http://www.w3.org/2000/svg';
+      const mp = mundo[MAIN_ID] || mundo[ORG2.staff[0].id];
+
+      ORG2.staff.forEach(function(st){
+        const p = mundo[st.id];
+        const stt = statusAgente(st.id);
+        const cor = '#'+stt.cor.toString(16).padStart(6,'0');
+        const eh = st.id===MAIN_ID;
+        const el = document.createElement('div');
+        el.className = 'co-node'+(eh?' co-main':'')+(stt.ativo?' ativo':'');
+        el.style.left = p.x+'px'; el.style.top = p.y+'px';
+        el.style.setProperty('--co', cor);
+        el.dataset.wx = p.wx; el.dataset.wz = p.wz;
+        el.innerHTML = '<div class="co-ava">'+(stt.n?'<span class="co-badge">'+stt.n+'</span>':'')+'</div>'+
+          '<div class="co-nome"><b>'+st.nome+'</b>'+(eh?'AGENTE PRINCIPAL':nomeArea(st.area))+'</div>';
+        el.onclick = (function(s){ return function(){ mostrar(s); }; })(st);
+        coNodes.appendChild(el);
+        if(stt.ativo && !eh){
+          const line = document.createElementNS(NS,'line');
+          line.setAttribute('x1', mp.x); line.setAttribute('y1', mp.y);
+          line.setAttribute('x2', p.x); line.setAttribute('y2', p.y);
+          line.setAttribute('class','co-beam');
+          line.setAttribute('stroke', cor);
+          line.setAttribute('stroke-width','1.4');
+          coSvg.appendChild(line);
+        }
+      });
+
+      coOnline.textContent = ORG2.staff.filter(function(s){ return s.id!==MAIN_ID && statusAgente(s.id).ativo; }).length;
+
+      if(!coLegend.childNodes.length){
+        coLegend.innerHTML = FASES.map(function(f){ return '<span><i style="background:'+f.cor+'"></i>'+f.nome+'</span>'; }).join('')+
+          '<span><i style="background:var(--amber)"></i>Agente principal (orquestrador)</span>';
+      }
+    }
+
+    function reposCowork(){
+      const {cx:cx, cy:cy, s:s} = layoutCowork();
+      document.querySelectorAll('.co-node').forEach(function(el){
+        const x = (el.dataset.wx - el.dataset.wz)*.866*s + cx;
+        const y = (el.dataset.wx + el.dataset.wz)*.5*s + cy;
+        el.style.left = x+'px'; el.style.top = y+'px';
+      });
+    }
+
+    /* ---- orchestrator chama /agents (gateway OmniRoute local); fallback: DEMANDAS ---- */
+    let liveAgents = null;
+    function coAgentsRemote(){
+      return fetch(AGENTS_URL).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+        .then(function(j){
+          liveAgents = j;
+          const lista = (j && (j.agents || (j.data && j.data.agents) || (Array.isArray(j)? j : null))) || null;
+          coTxt.textContent = 'orchestrator → /agents · '+ (lista ? (lista.length+' agentes ativos') : 'gateway OmniRoute respondendo') + ' · em tempo real';
+          if(lista) return lista;
+          return null;
+        });
+    }
+    function coAgentsLocal(){
+      const a = DEMANDAS.filter(function(d){ return d.fase!=='concluida'; });
+      coTxt.textContent = 'orchestrator → /agents · gateway offline — usando estado local ('+a.length+' atividades)';
+      return null;
+    }
+    function coAgents(){
+      if(typeof fetch!=='undefined'){
+        coAgentsRemote().catch(function(){ coAgentsLocal(); });
+      } else coAgentsLocal();
+    }
+
+    function startCoworkTicker(){
+      stopCoworkTicker();
+      coAgents();
+      const a = DEMANDAS.filter(function(d){ return d.fase!=='concluida'; });
+      if(!a.length){ coTxt.textContent = 'Nenhuma demanda ativa. Equipe em espera.'; return; }
+      let i=0;
+      coworkTimer = setInterval(function(){
+        const d = a[i % a.length];
+        const s = staffPorId(d.responsavel);
+        const fc = faseCorHex(d.fase);
+        coTxt.innerHTML = '<span style="color:'+fc+'">'+d.id+'</span> · '+d.titulo+
+          ' — <span style="color:'+fc+'">'+(faseInfo[d.fase]?faseInfo[d.fase].nome:d.fase)+'</span> ('+d.progresso+'%) · '+(s?s.nome:d.responsavel);
+        i++;
+      }, 3500);
+    }
+    function stopCoworkTicker(){ if(coworkTimer){ clearInterval(coworkTimer); coworkTimer=null; } }
+    window.stopCoworkTicker = stopCoworkTicker;
+
+    addEventListener('resize', function(){
+      if(cowork.classList.contains('open')) buildCowork();
+      reposCowork();
+    });
 
     /* ---------- cena 3D (falha controlada: DOM acima continua funcionando) ---------- */
     try {
@@ -493,7 +691,7 @@
       focar = function(g){
         alvoFocuso = g ? g.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,2,6)) : new THREE.Vector3(0,0,8);
       };
-      window.focar = focar;
+    window.focar = focar;
 
       /* ---------- raycast ---------- */
       const raycaster = new THREE.Raycaster(); const mouse = new THREE.Vector2();
