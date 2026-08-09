@@ -89,7 +89,7 @@ const DEMANDAS = [
     area: 'amb', responsavel: 'environmental-engineering', fase: 'execucao', prioridade: 'Alta', prazo: '15/08', progresso: 60,
     descricao: 'Fechar escopo, preço e cronograma do PRAD para envio à SUDEMA; envolver finance e market-segment.' },
   { id: 'D-02', titulo: 'Laudo de passivo ambiental para instituição financeira',
-    area: 'amb', responsavel: 'environmental-forensic-audit', fase: 'analise', prioridade: 'Média', prazo: '18/08', progresso: 30,
+    area: 'amb', responsavel: 'environmental-forensic-audit', fase: 'execucao', prioridade: 'Média', prazo: '18/08', progresso: 30,
     descricao: 'Diagnóstico de passivo com datação por NDVI; aplicável a financiamento/crédito rural.' },
   { id: 'D-03', titulo: 'Campanha de prospecção — 40 contatos do tracker (dias 0-30)',
     area: 'com', responsavel: 'client-prospecting', fase: 'execucao', prioridade: 'Alta', prazo: '12/08', progresso: 75,
@@ -101,16 +101,16 @@ const DEMANDAS = [
     area: 'eng', responsavel: 'iot-embedded', fase: 'concluida', prioridade: 'Alta', prazo: '05/08', progresso: 100,
     descricao: 'Contrato de telemetria, firmware MicroPython (ESP32-S3) e bridge MQTT→JSON integrados ao AIO Observatory.' },
   { id: 'D-06', titulo: 'Pipeline automático de NDVI (Zenodo/GitHub → dataset versionado)',
-    area: 'eng', responsavel: 'data-engineering', fase: 'backlog', prioridade: 'Média', prazo: '25/08', progresso: 0,
+    area: 'eng', responsavel: 'data-engineering', fase: 'analise', prioridade: 'Média', prazo: '25/08', progresso: 0,
     descricao: 'Coleta programada das séries Sentinel-2 do repo kraefegg/AIO com validação e camada bronze/silver.' },
   { id: 'D-07', titulo: 'Precificação dos kits IoT e fluxo de caixa 90 dias',
-    area: 'com', responsavel: 'finance', fase: 'analise', prioridade: 'Alta', prazo: '14/08', progresso: 40,
+    area: 'com', responsavel: 'finance', fase: 'execucao', prioridade: 'Alta', prazo: '14/08', progresso: 40,
     descricao: 'Custo de BOM + instalação + assinatura; modelar receita vs despesa e ponto de equilíbrio.' },
   { id: 'D-08', titulo: 'LGPD e minuta de NDA/confidencialidade',
     area: 'com', responsavel: 'legal-compliance', fase: 'revisao', prioridade: 'Média', prazo: '11/08', progresso: 80,
     descricao: 'Revisar fluxo de dados (Open-Meteo/INPE/GitHub) e modelo de NDA para reuniões com clientes.' },
   { id: 'D-09', titulo: 'Red Team — teste de segurança do HQ e do AIO Observatory',
-    area: 'seg', responsavel: 'cybersecurity', fase: 'backlog', prioridade: 'Média', prazo: '20/08', progresso: 0,
+    area: 'seg', responsavel: 'cybersecurity', fase: 'analise', prioridade: 'Média', prazo: '20/08', progresso: 0,
     descricao: 'Revisão de vetores: CDNs, telemetria, localStorage e headers; relatório White/Blue/Red.' },
   { id: 'D-10', titulo: 'Artigo técnico — monitoramento do PRAD por sensoriamento remoto',
     area: 'pes', responsavel: 'research-academic', fase: 'analise', prioridade: 'Baixa', prazo: '30/08', progresso: 20,
@@ -119,7 +119,7 @@ const DEMANDAS = [
     area: 'eng', responsavel: 'engineering-dev', fase: 'execucao', prioridade: 'Alta', prazo: '09/08', progresso: 50,
     descricao: 'Painel de gestão no corporate-hq.html: lista por fase, detalhe editável, persistência em localStorage.' },
   { id: 'D-12', titulo: 'Dashboard de geração solar para cliente-piloto',
-    area: 'ene', responsavel: 'renewable-energy', fase: 'backlog', prioridade: 'Média', prazo: '22/08', progresso: 0,
+    area: 'ene', responsavel: 'renewable-energy', fase: 'analise', prioridade: 'Média', prazo: '22/08', progresso: 0,
     descricao: 'Séries de geração (Open-Meteo/energia) com economia em tarifa horária e relatório mensal.' },
   { id: 'D-13', titulo: 'P&D — Edge Sensor Ambiental (embedded · IoT · Edge AI) para offshore e mineração',
     area: 'pes', responsavel: 'research-development', fase: 'execucao', prioridade: 'Alta', prazo: '19/08', progresso: 60,
@@ -129,7 +129,19 @@ const DEMANDAS = [
     descricao: 'Cofre local AES-256-GCM hardware-bound (security/cofre.py), 8 segredos cifrados, backup em texto eliminado, conexão com Databricks OpenSharing validada.' },
   { id: 'D-15', titulo: 'Documentação do projeto — docs/, diagramas, schemas, linguagens e códigos',
     area: 'eng', responsavel: 'engineering-dev', fase: 'revisao', prioridade: 'Média', prazo: '08/08', progresso: 85,
-    descricao: 'Estrutura docs/ com arquitetura (Mermaid), deployments, schemas (JSON/SQL) e referência de linguagens do projeto.' }
+    descricao: 'Estrutura docs/ com arquitetura (Mermaid), deployments, schemas (JSON/SQL) e referência de linguagens do projeto.' },
+  { id: 'D-16', titulo: 'AIO Comercial — versão multi-projeto e assinatura',
+    area: 'eng', responsavel: 'engineering-dev', fase: 'analise', prioridade: 'Alta', prazo: '15/09', progresso: 0,
+    descricao: 'Release comercial do AIO Observatory: multi-site, dados por cliente, marca d\'água e permissões; integração com assinatura recorrente.' },
+  { id: 'D-17', titulo: 'Página pública de M&V — demo para prospecção',
+    area: 'com', responsavel: 'commercial', fase: 'analise', prioridade: 'Alta', prazo: '05/09', progresso: 0,
+    descricao: 'Página pública com dados de demonstração, copy técnico-comercial e CTA de reunião; revisão de segurança antes do ar.' },
+  { id: 'D-18', titulo: 'Kit Estação Meteo — calibração, BOM e manual de instalação',
+    area: 'eng', responsavel: 'iot-embedded', fase: 'backlog', prioridade: 'Média', prazo: '20/09', progresso: 0,
+    descricao: 'Firmware ESP32-S3 validado, contrato JSON de telemetria, BOM final e manual de instalação para entrega em campo.' },
+  { id: 'D-19', titulo: 'Kit Comercial Digital — proposta, contrato de assinatura e precificação',
+    area: 'com', responsavel: 'commercial', fase: 'analise', prioridade: 'Alta', prazo: '30/08', progresso: 0,
+    descricao: 'Template de proposta PDF, contrato de assinatura de monitoramento (14.133) e planilha de precificação e fluxo de caixa.' }
 ];
 
 // ============ PESSOAS — DOSSIÊS & CURRÍCULOS ============
@@ -570,3 +582,102 @@ window.ORG = ORG;
 window.FASES = FASES;
 window.DEMANDAS = DEMANDAS;
 window.PESSOAS = PESSOAS;
+
+// ============ RELATÓRIOS & ANÁLISES (módulo Relatórios do HQ) ============
+// Fonte local (seed). O HQ tenta carregar do banco (Supabase REST) e degrada
+// graciosamente para este conjunto + localStorage quando o banco está offline.
+// Para adicionar nova análise: inclua aqui e registre em db/seed.sql (o módulo
+// do HQ também permite criar relatórios, salvando direto no banco).
+
+const RELATORIOS = [
+  {
+    id: 'R-2026-001',
+    codigo: 'R-2026-001',
+    titulo: 'Análise de Mercado e Soluções 2026',
+    tipo: 'analise',
+    autores: ['ceo','orchestrator','market-segment','analysts','client-prospecting','commercial'],
+    segmento: ['ambiental','energia','mineracao','sst','offshore','governo'],
+    data_relatorio: '2026-08-09',
+    versao: 1,
+    resumo: 'Estudo consolidado de mercados e soluções fornecíveis pela Kraefegg M.O. para 2026: tamanho de mercado por segmento, portfólio, oportunidades, decisões do CEO e plano de 90 dias.',
+    conteudo: [
+      '# Análise de Mercado e Soluções 2026 — Kraefegg M.O.',
+      '',
+      '> Consolidado pelo orquestrador com insumos de analysts, commercial, client-prospecting e market-segment. Decisões executivas do CEO.',
+      '',
+      '**Data:** 2026-08-09 · **Versão:** 1 · **Código:** R-2026-001',
+      '',
+      '## 1. Panorama macro (2026)',
+      '',
+      '- Consultoria ambiental no Brasil: R$ 6–10 bi/ano (cerca de 2–3% do mercado global de US$ 49,3 bi; Mordor Intelligence).',
+      '- Novo PAC com carteira de R$ 724 bi; Chamada Nordeste do BNDES de R$ 127,8 bi (245 projetos de transição energética, H2V e bioeconomia); desembolsos do BNDES no NE +184% no 1º sem/2026; FNE R$ 47 bi/2025.',
+      '- Caatinga em alta: edital Recaatingar (BNDES + BNB, recuperação socioprodutiva; 2º ciclo 15/10–14/12/2026) e programa Sertão Vivo (cerca de R$ 1 bi) — restauração do bioma é nicho direto para a Kraefegg.',
+      '- Marco regulatório: Lei 15.190/2025 (novo licenciamento ambiental), IN IBAMA 14/2024 (novo marco do PRAD), Lei 15.097/2025 (eólica offshore), SBCE/carbono (regras até dez/2026) e Taxonomia Sustentável Brasileira.',
+      '',
+      '## 2. Segmentos, mercado e prioridade',
+      '',
+      '| Segmento | SAM NE (ano) | Ticket típico | Risco | Prioridade |',
+      '|---|---|---|---|---|',
+      '| Geoambiental, PRAD e licenciamento (PB) | R$ 30–80 mi | R$ 15–60 mil | médio-baixo | 1 |',
+      '| Energia eólica/solar (PB + NE) | R$ 300–600 mi | R$ 250 mil–1,5 mi | médio-alto | 1 |',
+      '| Restauração + carbono (Caatinga) | Recaatingar R$ 55 mi | R$ 30–150 mil | médio | 1 |',
+      '| Mineração (Seridó/Cariri) | R$ 15–40 mi | R$ 40–250 mil | médio-alto | 2 |',
+      '| SST + perícia | R$ 20–50 mi | R$ 1,5–8 mil | médio | 3 |',
+      '| Offshore NE | R$ 300–600 mi (5–10 anos) | bilionário (EIA/RIMA) | alto | 4 (leve) |',
+      '',
+      '## 3. Soluções que fornecemos',
+      '',
+      '1. Assessoria ambiental contínua para prefeituras (OMMA + licenciamento + captação) — assinatura mensal R$ 3–8 mil.',
+      '2. Licenciamento e monitoramento de condicionantes para eólicas — projeto + assinatura AIO.',
+      '3. PRAD + monitoramento e verificação de restauração (AIO Observatory, NDVI Sentinel-2 real) — projeto + assinatura trimestral.',
+      '4. Due diligence e auditoria de parques eólicos/solares — R$ 30–120 mil por ativo.',
+      '5. RFP, PAE, RAL, caracterização mineralógica e PRAD minerário — fixo + retainer anual.',
+      '6. Linha IoT/Edge (estações meteorológicas, telemetria de talude/barragem, Res. ANM 95/2022) — kit R$ 8–25 mil + assinatura R$ 300–1.000/mês.',
+      '7. SST integrada (PGR/LTCAT/NRs) e inventário de GEE + MRV (pré-SBCE) — pacote + mensalidade de gestão.',
+      '',
+      '## 4. Oportunidades e parcerias',
+      '',
+      '- Editais: Recaatingar (2º ciclo até 14/12/2026), Fundo Clima (PAAR 2026 reembolsável de R$ 27 bi), FNDCT/Finep (20% da carteira para N/NE/CO), SBCE (preparação para MRV).',
+      '- Poder público: assessoria contínua via dispensa de licitação 14.133 (art. 75, II); implantação do licenciamento municipal (COPAM-PB); TACs MPPB/MPF (PRAD + monitoramento periódico).',
+      '- Parcerias: SEBRAE-PB (SEBRAETEC), UFPB/UFCG/IFPB (FNDCT descentralizado), EMBRAPA Semiárido/INSA, BNB/BNDES/FBDS e CREA-PB.',
+      '',
+      '## 5. Decisões executivas (CEO)',
+      '',
+      '1. Aprovar priorização: prefeituras → eólicas PB → restauração/carbono.',
+      '2. Assinatura como âncora de receita recorrente (AIO + monitoramento contínuo).',
+      '3. Delegar: market-segment e client-prospecting (propostas Recaatingar antes de 15/10 e assessorias municipais em 90 dias); commercial e engineering-dev (página pública de M&V + template de proposta); contracts-business e legal-compliance (contrato de assinatura 14.133); finance (precificação e fluxo de caixa); research-academic (credenciais para EIA/RIMA offshore).',
+      '4. Registrar todas as análises no banco de dados e disponibilizar download no HQ.',
+      '',
+      '## 6. Riscos e mitigação',
+      '',
+      '| Risco | Mitigação |',
+      '|---|---|',
+      '| PL 2.061/2024 (PB) — distanciamento de 1,5 km pode inviabilizar projetos eólicos | Monitorar com legal-compliance; diversificar carteira |',
+      '| Curtailment e FNE suspenso para geração centralizada | Focar due diligence/M&A em vez de novos EIA/RIMA onshore |',
+      '| Eleições 2026 — descontinuidade de contratos municipais | Diversificar carteira; contrato anual com cláusula de transição |',
+      '| SBCE ainda em regulamentação | Oferecer preparação (inventário/MRV), não garantias |',
+      '| Offshore apenas a partir de 2027 | Posicionamento leve: studies, credenciais e SST portuária |',
+      '',
+      '*Fontes: pesquisa de mercado 2026 (BNDES, MMA, IBAMA, SUDEMA, ANM, BNB, SEBRAE, Absolar, ABEEólica, EPE/MCTI). Estimativas de ordem de grandeza.*'
+    ].join('\n'),
+    metadados: {
+      download_count: 0,
+      fontes: ['BNDES','MMA','IBAMA','SUDEMA','ANM','BNB','SEBRAE','Absolar','ABEEólica','EPE/MCTI'],
+      decisao: 'Priorizar prefeituras, eólicas PB e restauração/carbono nos próximos 90 dias'
+    }
+  }
+];
+
+// ============ CONFIG DE BANCO DO HQ (Supabase REST — chave publishable) ============
+// A chave anon/publishable é pública por design (proteção via RLS). O módulo
+// Relatórios usa este endpoint e, se falhar, opera em modo offline (seed + localStorage).
+const HQ_DB = {
+  suporte: true,
+  supabase: {
+    url: 'https://mrqjmdfulmnggozwjxlq.supabase.co',
+    key: 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y'
+  }
+};
+
+window.RELATORIOS = RELATORIOS;
+window.HQ_DB = HQ_DB;
