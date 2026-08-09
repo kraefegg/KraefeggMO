@@ -35,6 +35,37 @@
     border-bottom:1px solid var(--linha)}
   .logo{display:flex;flex-direction:column;gap:5px}
 
+  /* ---- HUD de gamificação: Sinergia do Conselho + XP + conquistas ---- */
+  #gamifica{position:fixed;right:18px;bottom:18px;z-index:9;width:292px;pointer-events:none;
+    background:linear-gradient(180deg,rgba(16,22,36,.92),rgba(8,12,20,.94));
+    border:1px solid rgba(94,160,255,.35);border-radius:14px;padding:12px 14px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 1px 0 rgba(220,232,247,.08)}
+  #gamifica .gm-tit{display:flex;align-items:center;justify-content:space-between;font-size:9px;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+  #gamifica .gm-tit b{color:var(--steelC);font-size:10px}
+  #gamifica .gm-xp{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+  #gamifica .gm-xp .xp{font-size:26px;font-weight:800;line-height:1;
+    background:linear-gradient(180deg,#cfe6ff,#5ea0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  #gamifica .gm-xp .lvl{font-size:9px;color:var(--amber);border:1px solid rgba(242,201,76,.5);
+    padding:2px 8px;border-radius:999px;letter-spacing:.5px}
+  #gamifica .gm-boss .lb{display:flex;justify-content:space-between;font-size:9px;text-transform:uppercase;
+    letter-spacing:1px;color:var(--dim);margin-bottom:3px}
+  #gamifica .gm-boss .lb b{color:#f06595}
+  #gamifica .gm-bar{height:10px;border-radius:6px;background:rgba(120,150,255,.12);overflow:hidden;position:relative}
+  #gamifica .gm-bar i{display:block;height:100%;border-radius:6px;width:0;position:relative;
+    background:linear-gradient(90deg,#f06595,#b197fc,#5ea0ff,#22d3ee);background-size:300% 100%;
+    animation:gmShine 3s linear infinite;transition:width 1.2s ease}
+  #gamifica .gm-bar i::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+    background-size:60% 100%;background-repeat:no-repeat;animation:gmSweep 1.8s linear infinite}
+  @keyframes gmShine{to{background-position:300% 0}}
+  @keyframes gmSweep{from{background-position:-60% 0}to{background-position:160% 0}}
+  #gamifica .gm-ach{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+  #gamifica .gm-chip{font-size:9px;letter-spacing:.3px;color:var(--dim);border:1px solid var(--linha);
+    padding:3px 8px;border-radius:999px;opacity:.72;transition:.3s;white-space:nowrap}
+  #gamifica .gm-chip.on{color:#d8ffd6;border-color:rgba(81,207,102,.6);opacity:1;
+    box-shadow:0 0 10px rgba(81,207,102,.25)}
+
   /* ---- Placa de identificação: logotipo iluminado ---- */
   #placa{position:relative;width:258px;height:48px;border-radius:9px;overflow:hidden;
     background:linear-gradient(180deg,#3d4d68,#1b2334 46%,#28354b);
@@ -318,6 +349,16 @@
   <div id="legend"></div>
   <div id="hint">Clique em um agente para ver o detalhe · arraste para orbitar · rolagem para zoom · clique na área para filtrar</div>
 
+  <div id="gamifica">
+    <div class="gm-tit"><b>KRAEFEGG M.O.</b>Gamificação · Conselho</div>
+    <div class="gm-xp"><span class="xp" id="gm_xp">0</span> XP <span class="lvl" id="gm_lvl">NÍVEL 0</span></div>
+    <div class="gm-boss">
+      <div class="lb"><span>⚡ Chefe do Conselho · Sinergia</span><b id="gm_sin">0%</b></div>
+      <div class="gm-bar"><i id="gm_bar"></i></div>
+    </div>
+    <div class="gm-ach" id="gm_ach"></div>
+  </div>
+
   <aside id="panel">
     <button class="close" onclick="fecharPainel()">✕</button>
     <div id="p_conteudo"></div>
@@ -379,12 +420,19 @@
     var ctx = cv.getContext('2d'), bg = null;
     var PS = 6, GW = 150, GH = 96, ts = 0, lastFlip = 0;
     var x0, x1, cx, ground, winCols, winRows, winLit, winCol, signX, cars = [];
+    var rain = [], drones = [], neon = [], fog = [], shoot = null, flash = 0;
 
     var FONT = {
       K:['101','110','100','110','101'], R:['110','101','110','101','101'],
       A:['010','101','111','101','101'], E:['111','100','111','100','111'],
       F:['111','100','111','100','100'], G:['011','100','101','101','011'],
-      M:['101','111','111','101','101'], O:['010','101','101','101','010'], ' ':['000','000','000','000','000']
+      M:['101','111','111','101','101'], O:['010','101','101','101','010'], ' ':['000','000','000','000','000'],
+      V:['101','101','101','101','010'], N:['101','111','101','101','101'],
+      I:['111','010','010','010','111'], T:['111','010','010','010','010'],
+      S:['011','100','011','001','110'], D:['110','101','101','101','110'],
+      U:['101','101','101','101','011'], L:['100','100','100','100','111'],
+      C:['011','100','100','100','011'], B:['110','101','110','101','110'],
+      P:['110','101','110','100','100']
     };
     var SIGN = 'KRAEFEGG MO';
     var seed = 98765;
@@ -413,6 +461,17 @@
       signX = x0 + Math.floor((44 - SIGN.length*3)/2);
       cars = [];
       for(var k=0;k<5;k++) cars.push({ x: rnd()*GW, dir: rnd()<.5?-1:1, v: .35+rnd()*.5, c: ['#8ca3c0','#5ea0ff','#f2c94c','#4b5a72','#c9d6ea'][k] });
+      rain = [];
+      var rcols = [7, 22, 40, 112, 124, 138];
+      for(var rr=0; rr<rcols.length; rr++) rain.push({ x: rcols[rr]+(rr%2), y: Math.floor(rnd()*40), v: .4+rnd()*.7 });
+      drones = [];
+      for(var dd=0; dd<3; dd++) drones.push({ x: rnd()*GW, y: 12+dd*6, dir: dd%2?-1:1, v: .3+rnd()*.3, c: ['#5ea0ff','#22d3ee','#f06595'][dd] });
+      neon = [
+        { x: 7,  y: 44, txt: 'MINA', c1: '#b197fc', c2: '#f06595' },
+        { x: 119, y: 40, txt: 'EDGE', c1: '#22d3ee', c2: '#5ea0ff' }
+      ];
+      fog = [ { y: ground-2, v: .02 }, { y: ground-6, v: .015 }, { y: ground-4, v: .025 } ];
+      shoot = null; flash = 0;
       drawBG();
     }
 
@@ -453,6 +512,41 @@
       rect(0, 90, GW, 2, '#263145'); rect(0, 92, GW, 4, '#0c1119');
       for(var lm=0;lm<4;lm++){ var lx=20+lm*36; rect(lx, 80, 1, ground-80, '#3c4c66'); rect(lx-1, 79, 3, 1, '#4a5b76'); }
       ctx = old;
+    }
+
+    function cyberAnim(){
+      var i, r, dr, n, f, d;
+      for(i=0;i<rain.length;i++){ r=rain[i]; r.y += r.v; if(r.y > ground-6){ r.y = 6; }
+        for(d=0; d<5; d++){ var dy = r.y-d; if(dy>6 && dy<ground-6) rect(r.x, dy, 1, 1, d===0 ? '#cfe6ff' : 'rgba(94,160,255,'+(.55-d*.1).toFixed(2)+')'); }
+      }
+      for(i=0;i<drones.length;i++){ dr=drones[i]; dr.x += dr.v*dr.dir;
+        if(dr.x > GW+4) dr.x = -4; if(dr.x < -4) dr.x = GW+4;
+        rect(dr.x, dr.y, 3, 2, dr.c); rect(dr.x, dr.y+2, 1, 1, '#5a6d8c');
+        if(Math.floor(ts/8)%2===0) rect(dr.x+1, dr.y, 1, 1, '#eef6ff');
+      }
+      for(i=0;i<neon.length;i++){ n=neon[i];
+        var col = Math.floor(ts/14)%2===0 ? n.c1 : n.c2;
+        rect(n.x-1, n.y-1, n.txt.length*3+2, 7, 'rgba(20,26,40,.8)');
+        txt(n.txt, n.x, n.y, 1, col);
+        if(Math.floor(ts/30)%3===0) rect(n.x-1, n.y+6, n.txt.length*3+2, 1, col);
+      }
+      for(i=0;i<fog.length;i++){ f=fog[i]; f.y -= f.v; if(f.y < 60) f.y = ground;
+        var al = .05 + .03*Math.sin(ts/260+i);
+        ctx.fillStyle = 'rgba('+[[177,151,252],[94,160,255],[34,211,238]][i].join(',')+','+al.toFixed(3)+')';
+        var fw = 30 + 20*Math.sin(ts/500+i*2);
+        ctx.fillRect(Math.floor((GW-fw)/2), Math.floor(f.y), fw, 2);
+      }
+      if(shoot){ shoot.x += shoot.vx; shoot.y += shoot.vy; shoot.life--;
+        rect(shoot.x, shoot.y, 4, 1, '#eef6ff'); rect(shoot.x+1, shoot.y+1, 2, 1, 'rgba(238,246,255,.6)');
+        if(shoot.life<=0) shoot = null;
+      } else if(ts%400 < 2){ shoot = { x: rnd()*GW, y: 4+rnd()*8, vx: .9+rnd()*.6, vy: .25, life: 34 }; }
+      var washA = .05 + .04*Math.sin(ts/320);
+      var washG = ctx.createLinearGradient(0, 0, 0, 60*PS);
+      washG.addColorStop(0, 'rgba(177,151,252,'+washA.toFixed(3)+')');
+      washG.addColorStop(1, 'rgba(177,151,252,0)');
+      ctx.fillStyle = washG; ctx.fillRect(0, 0, GW*PS, 60*PS);
+      if(flash > 0){ flash--; ctx.fillStyle = 'rgba(220,235,255,'+(flash/14*.5).toFixed(2)+')'; ctx.fillRect(0, 0, GW*PS, GH*PS); }
+      else if(ts%900 === 0){ flash = 14; }
     }
 
     function frame(){
@@ -503,6 +597,8 @@
       for(var lg=0;lg<4;lg++){ var lx=20+lg*36; var a=.12+.08*Math.sin(ts/200+lg); rect(lx-5, 76, 11, 4, 'rgba(242,201,76,'+a.toFixed(3)+')'); rect(lx-1, 79, 3, 1, '#ffd98a'); }
 
       for(var tw=0;tw<10;tw++){ var tx=(tw*67)%GW, ty=(tw*23)%30; var al=(Math.sin(ts/300+tw*2.4)+1)/2; rect(tx, ty, 1, 1, 'rgba(200,215,235,'+(al*.75).toFixed(3)+')'); }
+
+      cyberAnim();
 
       requestAnimationFrame(frame);
     }
@@ -866,8 +962,46 @@
             '<div class="dx-form">'+form+(nat?' · '+nat:'')+'</div>'+
           '</div>';
       }).join('') || '<div class="dx-empty">Nenhum perfil encontrado.</div>';
+      calcGamificacao();
     }
     window.renderDossies = renderDossies;
+
+    function calcGamificacao(){
+      let xp = 0, sin = 0, n = 0;
+      ORG2.staff.forEach(function(s){
+        const p = PESSOAS[s.id];
+        const lvl = p && typeof p.nivelPct === 'number' ? p.nivelPct : 0;
+        xp += lvl; sin += lvl; n++;
+      });
+      sin = n ? Math.round(sin/n) : 0;
+      const concluidas = DEMANDAS.filter(d=>d.fase==='concluida').length;
+      const totalDem = DEMANDAS.length;
+      const lvlEmp = Math.max(1, Math.min(10, Math.round(xp/380)));
+      window.__sinergia = sin;
+      const elXp = document.getElementById('gm_xp');
+      const elLvl = document.getElementById('gm_lvl');
+      const elSin = document.getElementById('gm_sin');
+      const elBar = document.getElementById('gm_bar');
+      const elAch = document.getElementById('gm_ach');
+      if(elXp) elXp.textContent = xp;
+      if(elLvl) elLvl.textContent = 'NÍVEL '+lvlEmp;
+      if(elSin) elSin.textContent = sin+'%';
+      if(elBar) elBar.style.width = sin+'%';
+      if(elAch){
+        const conquistas = [
+          { t: 'Conselho completo', ok: n===38 },
+          { t: 'Sinergia 75%+', ok: sin>=75 },
+          { t: '1ª demanda concluída', ok: concluidas>=1 },
+          { t: '50% das demandas concluídas', ok: totalDem>0 && concluidas/totalDem >= .5 },
+          { t: 'CEO na mesa', ok: !!PESSOAS.ceo }
+        ];
+        elAch.innerHTML = conquistas.map(function(a){
+          return '<span class="gm-chip'+(a.ok?' on':'')+'">'+(a.ok?'✔ ':'◌ ')+a.t+'</span>';
+        }).join('');
+      }
+    }
+    window.calcGamificacao = calcGamificacao;
+    calcGamificacao();
 
     function abrirDossie(id){
       const s = staffPorId(id); if(!s) return;
@@ -1272,6 +1406,30 @@
       const sun = new THREE.DirectionalLight(0xdfe8f7, 1.1); sun.position.set(40, 60, 30); scene.add(sun);
       const rim = new THREE.PointLight(0x5ea0ff, .9, 120); rim.position.set(-40, 10, -50); scene.add(rim);
       const gold = new THREE.PointLight(0xf2c94c, .6, 90); gold.position.set(30, 20, 40); scene.add(gold);
+      const vl = new THREE.PointLight(0xb197fc, .7, 90); vl.position.set(0, 16, 28); scene.add(vl);
+
+      /* ---------- partículas de dados subindo ---------- */
+      const NP = 240;
+      const ppos = new Float32Array(NP*3);
+      for(let i=0;i<NP;i++){
+        ppos[i*3]   = (Math.random()-.5)*74;
+        ppos[i*3+1] = Math.random()*48;
+        ppos[i*3+2] = (Math.random()-.5)*74;
+      }
+      const pgeo = new THREE.BufferGeometry();
+      pgeo.setAttribute('position', new THREE.BufferAttribute(ppos, 3));
+      const pmat = new THREE.PointsMaterial({ color: 0x7fc4ff, size: .14, transparent: true, opacity: .65, sizeAttenuation: true, depthWrite: false });
+      const pts = new THREE.Points(pgeo, pmat); scene.add(pts);
+
+      /* ---------- feixe holograma central ---------- */
+      const beam = new THREE.Mesh(new THREE.ConeGeometry(1.7, 15, 24, 1, true),
+        new THREE.MeshBasicMaterial({ color: 0x5ea0ff, transparent: true, opacity: .14, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+      beam.position.y = 7.5; scene.add(beam);
+
+      /* ---------- pulso de sinergia (chão) ---------- */
+      const pulso = new THREE.Mesh(new THREE.RingGeometry(.6, .9, 64),
+        new THREE.MeshBasicMaterial({ color: 0x5ea0ff, transparent: true, opacity: .55, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+      pulso.rotation.x = -Math.PI/2; pulso.position.y = .42; scene.add(pulso);
 
       /* ---------- plataformas ---------- */
       function disco(r, cor, y, op){
@@ -1320,6 +1478,18 @@
         return grp;
       }
 
+      function sprBarra(pct, hex){
+        const W = 64, H = 10;
+        const cv = document.createElement('canvas'); const c = cv.getContext('2d');
+        cv.width = W; cv.height = H;
+        c.fillStyle = 'rgba(8,12,20,.92)'; c.fillRect(0, 0, W, H);
+        c.strokeStyle = 'rgba(148,172,208,.4)'; c.lineWidth = 1; c.strokeRect(.5, .5, W-1, H-1);
+        if(pct > 0){ c.fillStyle = hex; c.fillRect(2, 2, Math.max(2, (W-4)*pct/100), H-4); }
+        const tex = new THREE.CanvasTexture(cv);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+        const k = .018; sp.scale.set(W*k, H*k, 1); sp.renderOrder = 2; return sp;
+      }
+
       /* ---------- layout dos agentes ---------- */
       const areaIdx = {}; ORG2.areas.forEach((a,i)=>areaIdx[a.id]=i);
       const raioBase = [0, 5, 14, 18.5, 23, 27.5, 32, 36.5, 40.5];
@@ -1342,6 +1512,10 @@
         const lbl = makeLabel((PESSOAS[s.id]&&PESSOAS[s.id].nome)||s.nome, hex);
         lbl.position.set(0, alt + 1.7, 0);
         grp.add(lbl);
+        const pct = PESSOAS[s.id] && typeof PESSOAS[s.id].nivelPct === 'number' ? PESSOAS[s.id].nivelPct : 0;
+        const bar = sprBarra(pct, hex);
+        bar.position.set(0, alt + 2.45, 0);
+        grp.add(bar);
         staffRoot.add(grp);
         selecionados[s.id] = grp;
         staffMeshes.push(grp.userData.sph);
@@ -1373,10 +1547,31 @@
 
       /* ---------- animação ---------- */
       const clock = new THREE.Clock();
+      const sinergiaCor = { r: 94, g: 160, b: 255 };
+      window.__sinergia = 0;
       function animate(){
         const t = clock.getElapsedTime();
         anel.rotation.z = t*.15;
         staffRoot.rotation.y = Math.sin(t*.05)*.05;
+        sun.position.x = 40*Math.cos(t*.02); sun.position.z = 30*Math.sin(t*.02);
+        rim.intensity = .9 + .4*Math.sin(t*.8);
+        vl.intensity = .7 + .5*Math.sin(t*1.1);
+        gold.intensity = .6 + .25*Math.sin(t*.6);
+        beam.rotation.y += .012;
+        beam.material.opacity = .12 + .05*Math.sin(t*1.4);
+        pulso.scale.setScalar(1 + (Math.sin(t*1.2)+1)*3.5);
+        pulso.material.opacity = .5 - (Math.sin(t*1.2)+1)*.22;
+        const sin = window.__sinergia || 0;
+        pulso.material.color.setRGB(
+          (sinergiaCor.r + (240-sinergiaCor.r)*sin/100)/255,
+          (sinergiaCor.g + (101-sinergiaCor.g)*sin/100)/255,
+          (sinergiaCor.b + (149-sinergiaCor.b)*sin/100)/255
+        );
+        for(let i=0;i<NP;i++){
+          ppos[i*3+1] += .022;
+          if(ppos[i*3+1] > 48) ppos[i*3+1] = 0;
+        }
+        pgeo.attributes.position.needsUpdate = true;
         if(alvoFocuso){
           controls.target.lerp(alvoFocuso, .06);
           if(controls.target.distanceTo(alvoFocuso) < .5) alvoFocuso = null;
