@@ -1,0 +1,9 @@
+{
+  "routes": [
+    { "route": "/", "rewrite": "/corporate-hq.html" },
+    { "route": "/index.html", "rewrite": "/corporate-hq.html" }
+  ],
+  "responseOverrides": {
+    "404": { "rewrite": "/corporate-hq.html" }
+  }
+}
