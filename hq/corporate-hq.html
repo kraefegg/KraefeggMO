@@ -475,6 +475,7 @@
     <div class="kpi"><span>Áreas</span><strong id="k_area">0</strong></div>
     <div class="kpi"><span>Demandas ativas</span><strong id="k_dem">0</strong></div>
     <div class="kpi"><span>Prop · Reun · Cont</span><strong id="k_ppc">3/8/40</strong></div>
+    <div class="kpi"><span>Banco (Supabase)</span><strong id="k_db" title="Agentes · Projetos · Demandas · Relatórios persistidos">—</strong></div>
   </div>
 
   <div class="dpanel" id="areas">
@@ -2069,6 +2070,20 @@
 
     relRecarregar();
     relSincronizarDb();
+
+    /* ---------- KPI de persistência (Supabase REST) ---------- */
+    window._atualizarKpiDb = function(){
+      var k = document.getElementById('k_db');
+      if(!k) return;
+      var d = (window.HQ_DB && HQ_DB.dados) || null;
+      var rel = Array.isArray(relRelatorios) ? relRelatorios.length : 0;
+      if(!d || !d.carregado){ k.textContent = '…'; return; }
+      k.textContent = d.agentes.length + '·' + d.projetos.length + '·' + d.demandas.length + '·' + rel;
+      k.title = d.agentes.length + ' agentes · ' + d.projetos.length + ' projetos · ' + d.demandas.length + ' demandas · ' + rel + ' relatórios (Supabase)';
+    };
+    if(window.HQ_DB && HQ_DB.dados && !HQ_DB.dados.carregado && HQ_DB.carregar){ HQ_DB.carregar(); }
+    var _kdbTimer = setInterval(function(){ window._atualizarKpiDb(); if(window.HQ_DB && HQ_DB.dados && HQ_DB.dados.carregado) clearInterval(_kdbTimer); }, 400);
+    window._atualizarKpiDb();
 
     /* ---------- cena 3D (falha controlada: DOM acima continua funcionando) ---------- */
     try {

@@ -681,3 +681,59 @@ const HQ_DB = {
 
 window.RELATORIOS = RELATORIOS;
 window.HQ_DB = HQ_DB;
+
+// ============================================================================
+// INTEGRAÇÃO REST COM O SUPABASE (entidades do HQ)
+// Carrega agentes, projetos e demandas do banco (schema public) e os expõe em
+// window.HQ_DB.dados, de forma ADITIVA (não sobrescreve os dados ricos locais).
+// Usa o mesmo padrão do módulo Relatórios. Se o banco estiver offline, degrada
+// silenciosamente (dados locais continuam valendo).
+// ============================================================================
+
+HQ_DB.dados = { agentes: [], projetos: [], demandas: [], carregado: false };
+
+HQ_DB._req = function(path, opts){
+  if(!HQ_DB.supabase || !HQ_DB.supabase.url || !HQ_DB.supabase.key) return Promise.resolve(null);
+  var db = HQ_DB.supabase;
+  var ctrl = new AbortController();
+  var to = setTimeout(function(){ ctrl.abort(); }, 8000);
+  var cfg = opts || {};
+  var init = { signal: ctrl.signal, headers: { apikey: db.key, 'Authorization': 'Bearer '+db.key } };
+  if(cfg.method){ init.method = cfg.method; }
+  if(cfg.body){ init.headers['Content-Type'] = 'application/json'; init.body = JSON.stringify(cfg.body); }
+  return fetch(db.url + '/rest/v1/' + path, init)
+    .then(function(res){
+      clearTimeout(to);
+      if(cfg.method){ return res.ok; }
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      return res.json();
+    })
+    .catch(function(){ clearTimeout(to); return null; });
+};
+
+HQ_DB.buscar = function(tabela, cols){
+  return HQ_DB._req(tabela + '?select=' + (cols || '*'));
+};
+HQ_DB.salvar = function(tabela, objeto){
+  return HQ_DB._req(tabela, { method: 'POST', body: objeto });
+};
+HQ_DB.excluir = function(tabela, coluna, valor){
+  return HQ_DB._req(tabela + '?' + coluna + '=eq.' + encodeURIComponent(valor), { method: 'DELETE' });
+};
+
+HQ_DB.carregar = function(){
+  if(!window.fetch) return;
+  var pAg = HQ_DB.buscar('agentes');
+  var pPr = HQ_DB.buscar('projetos');
+  var pDe = HQ_DB.buscar('demandas');
+  Promise.all([pAg, pPr, pDe]).then(function(r){
+    var ag = r[0], pr = r[1], de = r[2];
+    HQ_DB.dados.agentes  = Array.isArray(ag) ? ag : [];
+    HQ_DB.dados.projetos = Array.isArray(pr) ? pr : [];
+    HQ_DB.dados.demandas = Array.isArray(de) ? de : [];
+    HQ_DB.dados.carregado = true;
+  });
+};
+
+// Dispara o carregamento — os dados ficam disponíveis em HQ_DB.dados.
+HQ_DB.carregar();
