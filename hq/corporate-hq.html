@@ -1067,6 +1067,15 @@
       renderDemandas();
       atualizarStatus();
       tickAtividade();
+      if(window.HQ_DB && HQ_DB.salvar && HQ_DB.dados && HQ_DB.dados.carregado){
+        HQ_DB.salvar('demandas', {
+          codigo: nova.id, titulo: nova.titulo,
+          area: nova.area, responsavel: nova.responsavel,
+          fase: nova.fase, prioridade: {alta:'alta',média:'media',media:'media',baixa:'baixa'}[String(nova.prioridade).toLowerCase()]||'media',
+          prazo: nova.prazo==='—'?null:nova.prazo, progresso: nova.progresso,
+          descricao: nova.descricao||'Criada via Central de Comando.'
+        });
+      }
     }
     window.salvarNovaDemanda = salvarNovaDemanda;
 
@@ -2081,8 +2090,37 @@
       k.textContent = d.agentes.length + '·' + d.projetos.length + '·' + d.demandas.length + '·' + rel;
       k.title = d.agentes.length + ' agentes · ' + d.projetos.length + ' projetos · ' + d.demandas.length + ' demandas · ' + rel + ' relatórios (Supabase)';
     };
-    if(window.HQ_DB && HQ_DB.dados && !HQ_DB.dados.carregado && HQ_DB.carregar){ HQ_DB.carregar(); }
-    var _kdbTimer = setInterval(function(){ window._atualizarKpiDb(); if(window.HQ_DB && HQ_DB.dados && HQ_DB.dados.carregado) clearInterval(_kdbTimer); }, 400);
+
+    /* ---------- Mescla demandas/projetos reais do Supabase no painel ---------- */
+    window._mesclarBancoNoHq = function(){
+      var d = (window.HQ_DB && HQ_DB.dados) || null;
+      if(!d || !d.carregado) return;
+      var qtdAdicionadas = 0;
+      (d.demandas||[]).forEach(function(db){
+        var id = db.codigo || ('DB-D'+(db.id||''));
+        var existe = DEMANDAS.some(function(x){ return x.id===id; });
+        if(existe) return;
+        DEMANDAS.push({
+          id: id, titulo: db.titulo||db.nome||('Demanda '+id),
+          area: db.area||'com', responsavel: db.responsavel||'orchestrator',
+          fase: (db.fase && faseInfo[db.fase]) ? db.fase : 'backlog',
+          prioridade: {alta:'Alta',media:'Média',baixa:'Baixa',critica:'Alta'}[db.prioridade]||'Média',
+          prazo: db.prazo||'—', progresso: db.progresso||0,
+          descricao: db.descricao||'', _fonteDb: true
+        });
+        qtdAdicionadas++;
+      });
+      if(qtdAdicionadas){
+        renderDemandas();
+        if(typeof montarAtividade === 'function') montarAtividade();
+        if(typeof atualizarStatus === 'function') atualizarStatus();
+      }
+      if(typeof window._atualizarKpiDb === 'function') window._atualizarKpiDb();
+    };
+    if(window.HQ_DB && HQ_DB.carregar){ HQ_DB.carregar(); }
+    var _kdbTimer = setInterval(function(){
+      if(window.HQ_DB && HQ_DB.dados && HQ_DB.dados.carregado){ clearInterval(_kdbTimer); window._mesclarBancoNoHq(); window._atualizarKpiDb(); }
+    }, 400);
     window._atualizarKpiDb();
 
     /* ---------- cena 3D (falha controlada: DOM acima continua funcionando) ---------- */
