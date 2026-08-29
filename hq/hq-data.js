@@ -717,6 +717,9 @@ HQ_DB.buscar = function(tabela, cols){
 HQ_DB.salvar = function(tabela, objeto){
   return HQ_DB._req(tabela, { method: 'POST', body: objeto });
 };
+HQ_DB.atualizar = function(tabela, coluna, valor, dados){
+  return HQ_DB._req(tabela + '?' + coluna + '=eq.' + encodeURIComponent(valor), { method: 'PATCH', body: dados });
+};
 HQ_DB.excluir = function(tabela, coluna, valor){
   return HQ_DB._req(tabela + '?' + coluna + '=eq.' + encodeURIComponent(valor), { method: 'DELETE' });
 };

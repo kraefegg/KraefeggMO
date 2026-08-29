@@ -1178,6 +1178,9 @@
       if(selecionadaDem.fase==='concluida') selecionadaDem.progresso = 100;
       salvo[selecionadaDem.id] = { fase: selecionadaDem.fase, progresso: selecionadaDem.progresso };
       grava();
+      if(selecionadaDem._fonteDb && window.HQ_DB && HQ_DB.atualizar){
+        HQ_DB.atualizar('demandas', 'codigo', selecionadaDem.id, { fase: selecionadaDem.fase, progresso: selecionadaDem.progresso });
+      }
       abrirDemanda(selecionadaDem.id); renderDemandas();
     }
     window.moverFase = moverFase;
@@ -1189,6 +1192,9 @@
       if(p===100) selecionadaDem.fase = 'concluida';
       salvo[selecionadaDem.id] = { fase: selecionadaDem.fase, progresso: selecionadaDem.progresso };
       grava();
+      if(selecionadaDem._fonteDb && window.HQ_DB && HQ_DB.atualizar){
+        HQ_DB.atualizar('demandas', 'codigo', selecionadaDem.id, { fase: selecionadaDem.fase, progresso: selecionadaDem.progresso });
+      }
       const b1 = document.getElementById('dp_bar');
       const b2 = document.getElementById('dp_val');
       const b3 = document.getElementById('dp_num');
