@@ -33,6 +33,27 @@ $ENTREGAS = "C:\hq-prod\entregas"   # pasta durável de documentos reais
 $HDR   = @{ "apikey"=$API_KEY; "Authorization"="Bearer "+$API_KEY; "Content-Type"="application/json" }
 $OHDR  = @{ "Authorization"="Bearer "+$OR_KEY; "Content-Type"="application/json" }
 
+# ---------- Config Google Drive (upload dos documentos) ----------
+# Credencial OAuth (Web) da conta kraefegg.mos3@gmail.com; token de refresh
+# guardado em C:\hq-prod\rclone\ (FORA do repositório — nunca versionado).
+$RCLONE = "C:\Users\MEU PC\AppData\Local\Microsoft\WinGet\Packages\Rclone.Rclone_Microsoft.Winget.Source_8wekyb3d8bbwe\rclone-v1.75.0-windows-amd64\rclone.exe"
+$RCCONF = "C:\hq-prod\rclone\rclone.conf"
+$DRIVE_ROOT = "drive-hq:CEO - Demandas HQ/Entregas"
+
+# Envia um arquivo .md para a pasta de entregas no Drive e retorna o link
+# público (ou $null em falha). O nome de destino usa o código da demanda.
+function Push-DriveDoc {
+    param([string]$LocalPath, [string]$DestName)
+    if (-not (Test-Path $LocalPath)) { return $null }
+    if (-not (Test-Path $RCLONE)) { Write-Warning "rclone nao encontrado em $RCLONE"; return $null }
+    try {
+        & $RCLONE copy $LocalPath "$DRIVE_ROOT" --config $RCCONF 2>$null | Out-Null
+        $link = (& $RCLONE link "$DRIVE_ROOT/$DestName" --config $RCCONF 2>$null | Out-String).Trim()
+        if ($link -match '^https?://') { return $link }
+    } catch { Write-Warning "Erro no upload Drive: $($_.Exception.Message)" }
+    return $null
+}
+
 if (-not (Test-Path $ENTREGAS)) { New-Item -ItemType Directory -Path $ENTREGAS -Force | Out-Null }
 
 # ---------- 1) Busca demandas abertas no Supabase ----------
@@ -99,6 +120,7 @@ Demanda: codigo={codigo}, titulo={titulo}, fase={fase}, prioridade={prioridade},
     $prompt_doc = $prompt_doc.Replace("{titulo}", $d.titulo).Replace("{codigo}", $d.codigo).Replace("{fase}", $d.fase).Replace("{prioridade}", $analise.prioridade_nova).Replace("{responsavel}", $d.responsavel).Replace("{sugestao}", $analise.sugestao).Replace("{risco}", $analise.risco)
 
     $docPath = $null
+    $docLink = $null
     try {
         $bodyD = @{ model=$MODEL; messages=@(@{role="user"; content=$prompt_doc}); max_tokens=1500 } | ConvertTo-Json -Depth 5
         $rD = Invoke-RestMethod -Uri "https://openrouter.ai/api/v1/chat/completions" -Method Post -Headers $OHDR -Body $bodyD -TimeoutSec 90
@@ -109,8 +131,17 @@ Demanda: codigo={codigo}, titulo={titulo}, fase={fase}, prioridade={prioridade},
         $docPath = Join-Path $dir ("requisitos-" + $d.codigo + ".md")
         [System.IO.File]::WriteAllText($docPath, $docText, (New-Object System.Text.UTF8Encoding($false)))
         Write-Host ("    DOC gerado: " + $docPath) -ForegroundColor Green
+
+        # Envia para o Google Drive e obtém o link público (se disponível)
+        $docLink = Push-DriveDoc -LocalPath $docPath -DestName ("requisitos-" + $d.codigo + ".md")
+        if ($docLink) {
+            Write-Host ("    DRIVE: " + $docLink) -ForegroundColor Cyan
+        } else {
+            Write-Host "    AVISO: upload para o Drive nao concluido (mantendo caminho local)." -ForegroundColor Yellow
+        }
     } catch {
         Write-Warning "Falha IA (documento) para $($d.codigo): $($_.Exception.Message)"
+        $docLink = $null
     }
 
     # --- 3) Grava análise + caminho do documento no Supabase (preserva original) ---
@@ -122,7 +153,8 @@ Demanda: codigo={codigo}, titulo={titulo}, fase={fase}, prioridade={prioridade},
             $baseDesc = ($orig -replace '(?s)\s*\[IA AGENTE\].*', '').Trim()
         } else { $baseDesc = $orig.Trim() }
         $blocoIA = "Sugestao: $($analise.sugestao) | Proximo: $($analise.proximo_passo) | Risco: $($analise.risco)"
-        if ($docPath) { $blocoIA += " | DOC: $docPath" }
+        if ($docLink) { $blocoIA += " | DOC: $docLink" }
+        elseif ($docPath) { $blocoIA += " | DOC: $docPath" }
         if ($baseDesc -eq "") { $novaDesc = "[IA AGENTE] $blocoIA" }
         else { $novaDesc = "$baseDesc | [IA AGENTE] $blocoIA" }
     } catch { }
@@ -134,7 +166,7 @@ Demanda: codigo={codigo}, titulo={titulo}, fase={fase}, prioridade={prioridade},
     } catch { Write-Warning "Falha ao gravar $($d.codigo): $($_.Exception.Message)" }
 
     $resultados += $analise
-    $indice += [pscustomobject]@{ codigo=$d.codigo; titulo=$d.titulo; doc=$docPath }
+    $indice += [pscustomobject]@{ codigo=$d.codigo; titulo=$d.titulo; doc=$(if ($docLink) { $docLink } else { $docPath }) }
 }
 
 # ---------- 4) Índice de entregáveis ----------
