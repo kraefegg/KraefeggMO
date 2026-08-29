@@ -1,0 +1,4 @@
+# Segredos — nunca versionar
+.env
+*.env.local
+OPENROUTER_API_KEY
