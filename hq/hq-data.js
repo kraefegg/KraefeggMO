@@ -35,6 +35,7 @@ const ORG = {
     { id: "iot-embedded",     nome: "IoT · Edge · Embedded", role: "MicroPython, ESP32, firmware, sensores, LoRa/MQTT", area: "eng", especialidade: "Hardware, edge AI, telemetria" },
     { id: "automation",       nome: "Automação & RPA",  role: "Automação de processos, scripts e CI/CD", area: "eng", especialidade: "Python, RPA, integrações" },
     { id: "cloud-infrastructure", nome: "Cloud Azure/AWS", role: "DevOps, IaC, Kubernetes, FinOps", area: "eng", especialidade: "Terraform, Docker, nuvem" },
+    { id: "sketchup-ruby",     nome: "SketchUp Ruby API", role: "Extensões e automação 3D com a API Ruby do SketchUp", area: "eng", especialidade: "Plugins 3D, quantitativos, DXF/IFC" },
     // ---- AMBIENTAL & SEGURANÇA ----
     { id: "environmental-engineering", nome: "Engenharia Ambiental", role: "Licenciamento, RAD/PRAD, monitoramento geoambiental", area: "amb", especialidade: "EIA/RIMA, sensoriamento remoto" },
     { id: "environmental-forensic-audit", nome: "Perícia & Auditoria", role: "Perícia e auditoria ambiental, datação de danos", area: "amb", especialidade: "NDVI forense, laudos" },
@@ -248,6 +249,17 @@ const PESSOAS = {
       { ano: "2024–atual", papel: "Data Engineering — Kraefegg M.O.", local: "Varsóvia/PL", desc: "Pipeline automático de NDVI (Zenodo/GitHub)." },
       { ano: "2019–2024", papel: "Data Engineer", local: "Logistics PL", desc: "Streaming e warehousing na nuvem." },
       { ano: "2016–2019", papel: "Desenvolvedor Python", local: "Fintech PL", desc: "Automações e integrações bancárias." }
+    ]
+  },
+  "sketchup-ruby": {
+    nome: "Nadia Voss", cargo: "Desenvolvedora SketchUp Ruby API", nat: "Alemã",
+    nivel: "Especialista", nivelPct: 88,
+    formacao: "B.Sc. Arquitetura · Especialização em Ruby/API SketchUp",
+    resumo: "Extensões e automação 3D com a API Ruby do SketchUp; plugins paramétricos e extração de quantitativos de modelo.",
+    cv: [
+      { ano: "2024–atual", papel: "SketchUp Ruby API — Kraefegg M.O.", local: "Berlim/DE", desc: "Marcos de automação de modelagem 3D e quantitativos para os projetos de engenharia civil, naval e ambiental." },
+      { ano: "2019–2024", papel: "Extension Developer", local: "AEC Studio DE", desc: "Plugins SketchUp para BIM-lite e interoperabilidade DXF/IFC; reduziu retrabalho de quantitativos em 60%." },
+      { ano: "2015–2019", papel: "Modeladora Arquitetônica", local: "Arquitetura DE", desc: "Modelagem paramétrica e documentação técnica de projetos residenciais e industriais." }
     ]
   },
   "iot-embedded": {

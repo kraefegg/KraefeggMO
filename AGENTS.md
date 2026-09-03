@@ -47,6 +47,7 @@ Empresa de **mineração, energia e engenharia ambiental** estruturada como sist
 | `mechanical-engineering` | Engenharia mecânica, estruturas e máquinas |
 | `energy-engineering` | Sistemas elétricos, armazenamento, eficiência |
 | `naval-engineering` | Projeto naval e estruturas marítimas |
+| `sketchup-ruby` | Desenvolvimento de extensões e automação com a API Ruby do SketchUp |
 | `research-academic` | PhDs, médicos, mestres, validação científica |
 | `consultants` | Consultores seniores multidisciplinares |
 

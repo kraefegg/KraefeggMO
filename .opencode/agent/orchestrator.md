@@ -46,6 +46,7 @@ Recebe pedidos e os **roteia** para o subagente especialista mais adequado. Nunc
 | Projetos mecânicos, estruturas e máquinas | `mechanical-engineering` |
 | Sistemas elétricos, armazenamento, eficiência | `energy-engineering` |
 | Projeto naval e estruturas marítimas | `naval-engineering` |
+| Extensões/automação SketchUp (API Ruby), plugins 3D, quantitativos de modelo | `sketchup-ruby` |
 | Validação científica, PhDs/médicos/mestres, revisão por pares | `research-academic` |
 | Consultoria sênior multidisciplinar por área | `consultants` |
 

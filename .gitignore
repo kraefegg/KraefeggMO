@@ -9,6 +9,9 @@ prospeccao-30-90.md
 comercial/
 comercial/*.csv
 
+# Scripts de produção (rodam local/C:\hq-prod, fora do repo público)
+hq-prod/hq-processar-demandas.ps1
+
 # Resumos de sessão / anotações locais
 hq/.anchored-summary.md
 
