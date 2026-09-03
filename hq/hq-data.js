@@ -583,6 +583,21 @@ window.FASES = FASES;
 window.DEMANDAS = DEMANDAS;
 window.PESSOAS = PESSOAS;
 
+// ============ API DAS DEMANDAS — CE-STRATEGIC (Supabase) ============
+// Fonte viva das demandas: o backend estratégico (Code Engine) registra no
+// Supabase. O corporate-hq.html puxa daqui e mescla com o seed local,
+// degradando para o modo offline (seed + localStorage) se a API falhar.
+const HQ_API = {
+  suporte: true,
+  ce_strategic: {
+    url: 'https://ce-strategic.2e4s1hfdcw14.br-sao.codeengine.appdomain.cloud',
+    token: 'kraefegg-mo-2026',
+    demandas_path: '/demandas'
+  }
+};
+
+window.HQ_API = HQ_API;
+
 // ============ RELATÓRIOS & ANÁLISES (módulo Relatórios do HQ) ============
 // Fonte local (seed). O HQ tenta carregar do banco (Supabase REST) e degrada
 // graciosamente para este conjunto + localStorage quando o banco está offline.

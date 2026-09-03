@@ -971,6 +971,58 @@
     FASES.forEach(f => mkFiltro(f.id, f.nome, false));
     renderDemandas();
 
+    /* ---------- integração: demandas vivas do CE-STRATEGIC (Supabase) ---------- */
+    // Puxa o registro de demandas do backend estratégico e mescla na lista,
+    // mantendo fallback offline (seed + localStorage) se a API não responder.
+    const HQ_API_CFG = window.HQ_API || null;
+    function normalizarDemandaCE(d, idx){
+      const cod = d.codigo || ('CE-' + (idx+1));
+      const prioridade = (d.prioridade || 'media');
+      const pr = prioridade.charAt(0).toUpperCase() + prioridade.slice(1);
+      return {
+        id: cod,
+        titulo: d.titulo || ('Demanda ' + cod),
+        area: d.area || 'exec',
+        responsavel: d.responsavel || 'orchestrator',
+        fase: faseInfo[d.fase] ? d.fase : 'backlog',
+        prioridade: pr,
+        prazo: d.prazo || ('—'),
+        progresso: typeof d.progresso === 'number' ? d.progresso : 0,
+        descricao: d.descricao || 'Registrada no ce-strategic (Supabase) — ver detalhes no Drive/backend.'
+      };
+    }
+    function carregarDemandasCE(){
+      const cfg = HQ_API_CFG && HQ_API_CFG.ce_strategic;
+      if(!cfg || !cfg.url) return;
+      fetch(cfg.url + cfg.demandas_path, { headers: { 'X-HQ-Token': cfg.token } })
+        .then(r => { if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(lista => {
+          if(!Array.isArray(lista)) return;
+          let novos = 0;
+          lista.forEach((d, i) => {
+            const nd = normalizarDemandaCE(d, i);
+            const ex = DEMANDAS.find(x => x.id === nd.id);
+            if(ex){
+              // atualiza campos vivos vindos do backend (sem sobrescrever edição manual salva)
+              ex.titulo = nd.titulo;
+              if(faseInfo[nd.fase]) ex.fase = nd.fase;
+              if(typeof nd.progresso === 'number') ex.progresso = nd.progresso;
+              ex.prioridade = nd.prioridade;
+              ex.responsavel = nd.responsavel || ex.responsavel;
+            } else {
+              DEMANDAS.push(nd);
+              novos++;
+            }
+          });
+          if(novos || lista.length){
+            renderDemandas();
+            if(typeof montarAtividade === 'function') montarAtividade();
+          }
+        })
+        .catch(function(e){ /* offline: mantém seed + localStorage */ });
+    }
+    carregarDemandasCE();
+
     /* ===================== Central de Comando ===================== */
     const kDem = document.getElementById('k_dem');
     const kPpc = document.getElementById('k_ppc');
