@@ -287,3 +287,4 @@
 {"ts": "2026-09-03T19:31:47.568508+00:00", "usuario": "runner", "host": "local", "arquivos_varridos": 79, "segredos_bloqueantes": 0, "matriz_violacoes": [{"arquivo": "hq-prod/hq-processar-demandas.ps1", "nivel": "INTERNO", "acima_de": "PUBLICO", "motivo": "Arquivo nível INTERNO versionado no repo público (máximo PUBLICO)."}], "aprovado": false}
 {"ts": "2026-09-03T20:14:44.527247+00:00", "usuario": "runner", "host": "local", "arquivos_varridos": 79, "segredos_bloqueantes": 0, "matriz_violacoes": [], "aprovado": true}
 {"ts": "2026-09-03T22:22:00.788360+00:00", "usuario": "runner", "host": "local", "arquivos_varridos": 79, "segredos_bloqueantes": 0, "matriz_violacoes": [], "aprovado": true}
+{"ts": "2026-09-04T03:24:10.341928+00:00", "usuario": "runner", "host": "local", "arquivos_varridos": 79, "segredos_bloqueantes": 0, "matriz_violacoes": [], "aprovado": true}
