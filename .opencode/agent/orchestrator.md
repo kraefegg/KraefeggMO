@@ -39,6 +39,7 @@ Recebe pedidos e os **roteia** para o subagente especialista mais adequado. Nunc
 | Segurança da informação, pentest, SOC, LGPD/ISO 27001 | `cybersecurity` |
 | RPA, automação de processos, pipelines, CI/CD | `automation` |
 | Nuvem Azure/AWS, DevOps, IaC, infraestrutura | `cloud-infrastructure` |
+| Conectividade de redes, disponibilidade/SRE, manter no ar Code Engine/OCI/bancos/workflows/Drive/OmniRoute/GitHub | `network-infrastructure` |
 | Apps fullstack (Python, Angular, Java, JS, HTML5, PyScript) | `fullstack-dev` |
 | Pipelines de dados, ETL, analytics, data engineering | `data-engineering` |
 | Banco de dados (schema kraefegg), DDL/SQL/views PostgreSQL | `data-analytics` |

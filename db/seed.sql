@@ -70,7 +70,8 @@ INSERT INTO agentes (id, codigo, nome, cargo, area_id, funcao, especialidade, mo
     (34, 'research-scientist',     'Pesquisa Científica',    'Pesquisador',               8, 'Sensoriamento, estatística',                'Métodos, artigos e P&D',              'omniroute/auto/best-reasoning'),
     (35, 'research-academic',      'Pesquisa Avançada',      'Pesquisador Sênior',        8, 'Revisão por pares, laudos',                 'PhDs, médicos, mestres',              'omniroute/auto/best-reasoning'),
     (36, 'cybersecurity',          'Cybersegurança',         'Analista de Segurança',     9, 'Pentest, SOC, LGPD/ISO 27001',              'White Hat · Blue Team · Red Team',    'omniroute/auto/best-reasoning'),
-    (37, 'consultants',            'Consultoria',            'Consultor Sênior',          9, 'Diagnósticos e pareceres',                  'Consultores seniores multidisciplinares','omniroute/auto/best-reasoning');
+    (37, 'consultants',            'Consultoria',            'Consultor Sênior',          9, 'Diagnósticos e pareceres',                  'Consultores seniores multidisciplinares','omniroute/auto/best-reasoning'),
+    (38, 'network-infrastructure', 'Redes & Conectividade',  'Engenheiro de Redes/SRE',   3, 'Code Engine, OCI, Supabase, rclone',        'Conectividade multiplataforma, bancos, workflows, self-healing', 'omniroute/auto/best-coding');
 
 INSERT INTO fases (id, codigo, nome, ordem, cor) VALUES
     (1, 'backlog',   'Backlog',     1, '#8ea3c6'),

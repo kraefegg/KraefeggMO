@@ -245,7 +245,7 @@ Nível 4 — CEO (Decisão Estratégica/Máxima)
     ├── CTO (Autoridade Técnica)
     │   ├── Division Heads (10 divisões)
     │   │   ├── Engineering: mining, energy, environmental, civil, maritime_port, infrastructure, safety, forestry
-    │   │   ├── Technology: engineering-dev, ai-ml, data-engineering, cloud-infrastructure, cybersecurity, iot-embedded, automation, fullstack-dev
+    │   │   ├── Technology: engineering-dev, ai-ml, data-engineering, cloud-infrastructure, network-infrastructure, cybersecurity, iot-embedded, automation, fullstack-dev
     │   │   ├── Quality: technical_review, fact_checking, source_verification, regulatory_compliance, risk_control, document_qa
     │   │   ├── Research: research_scientist, research_academic, + 4 especialistas
     │   │   └── Operations: project_management, delivery_management

@@ -35,6 +35,7 @@ const ORG = {
     { id: "iot-embedded",     nome: "IoT · Edge · Embedded", role: "MicroPython, ESP32, firmware, sensores, LoRa/MQTT", area: "eng", especialidade: "Hardware, edge AI, telemetria" },
     { id: "automation",       nome: "Automação & RPA",  role: "Automação de processos, scripts e CI/CD", area: "eng", especialidade: "Python, RPA, integrações" },
     { id: "cloud-infrastructure", nome: "Cloud Azure/AWS", role: "DevOps, IaC, Kubernetes, FinOps", area: "eng", especialidade: "Terraform, Docker, nuvem" },
+    { id: "network-infrastructure", nome: "Redes & Conectividade", role: "SRE/Ops: mantém no ar Code Engine, OCI, bancos, workflows, Google Drive, OmniRoute e GitHub", area: "eng", especialidade: "Code Engine, OCI, Supabase, PostgreSQL, MongoDB, rclone" },
     { id: "sketchup-ruby",     nome: "SketchUp Ruby API", role: "Extensões e automação 3D com a API Ruby do SketchUp", area: "eng", especialidade: "Plugins 3D, quantitativos, DXF/IFC" },
     // ---- AMBIENTAL & SEGURANÇA ----
     { id: "environmental-engineering", nome: "Engenharia Ambiental", role: "Licenciamento, RAD/PRAD, monitoramento geoambiental", area: "amb", especialidade: "EIA/RIMA, sensoriamento remoto" },

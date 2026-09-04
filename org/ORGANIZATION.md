@@ -216,6 +216,7 @@ org/
 | `ai-ml` | CTO | TECHNOLOGY | AI Engineering |
 | `data-engineering` | CTO | TECHNOLOGY | Data Engineering |
 | `cloud-infrastructure` | CTO | TECHNOLOGY | Cloud |
+| `network-infrastructure` | CTO | TECHNOLOGY | Network & SRE/Ops |
 | `automation` | CTO | TECHNOLOGY | Automation |
 | `cybersecurity` | CTO | TECHNOLOGY | Cybersecurity |
 | `iot-embedded` | CTO | TECHNOLOGY | IoT & Embedded |

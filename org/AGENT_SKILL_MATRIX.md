@@ -2,7 +2,7 @@
 
 **Versão:** 1.0.0  
 **Última revisão:** 2026-09-04  
-**Total de entradas:** 68 agentes × 53 skills
+**Total de entradas:** 69 agentes × 53 skills
 
 ---
 
@@ -68,6 +68,7 @@
 | `ai-ml` | data-analysis, technical-writing, critical-analysis | — | llm-specialist | OmniRoute, OmniRoute Gateway |
 | `data-engineering` | data-analysis, technical-writing, quality-control | — | — | OmniRoute, ETL Tools, DB |
 | `cloud-infrastructure` | technical-writing, quality-control, risk-analysis | — | — | OmniRoute, Azure/AWS Console |
+| `network-infrastructure` | technical-writing, quality-control, risk-analysis | — | — | OmniRoute, ibmcloud ce, OCI, rclone |
 | `automation` | technical-writing, quality-control, project-analysis | — | — | OmniRoute, RPA Tools, CI/CD |
 | `cybersecurity` | risk-analysis, technical-writing, quality-control, fact-checking | — | — | OmniRoute, Security Tools |
 | `iot-embedded` | technical-writing, data-analysis, project-analysis | — | — | OmniRoute, MicroPython, MQTT |

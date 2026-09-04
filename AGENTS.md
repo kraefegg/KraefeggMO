@@ -39,8 +39,9 @@ Tech-AI & Engineering Solutions firm — **mining, energy & environmental engine
 | `project-developers` | Gestão multidisciplinar de projetos |
 | `offshore-specialists` | Operações offshore |
 | `cybersecurity` | White Hat, Blue Team e Red Team, LGPD, segurança IoT |
-| `automation` | RPA, automação de processos, pipelines, CI/CD |
+| `automation` | RPA, automação de processos, pipelines, CI/CD, self-healing da infra HQ |
 | `cloud-infrastructure` | Azure, AWS, DevOps, IaC, arquitetura cloud |
+| `network-infrastructure` | Conectividade de redes e SRE/Ops: mantém no ar as duas nuvens de produção (Code Engine + OCI/Oracle), bancos (PostgreSQL/MongoDB/Supabase), workflows, Google Drive, OmniRoute e GitHub |
 | `fullstack-dev` | Python, Angular, Java, JavaScript, HTML5, PyScript |
 | `data-engineering` | Pipelines de dados, ETL, analytics, qualidade |
 | `iot-embedded` | IoT, Edge, Embedded, MicroPython, firmware, hardware |

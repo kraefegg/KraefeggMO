@@ -2,7 +2,7 @@
 
 **Versão:** 1.0.0  
 **Última revisão:** 2026-09-04  
-**Total de agentes:** ~61
+**Total de agentes:** ~69
 
 ---
 
@@ -68,7 +68,8 @@
 | `ai-ml` | Engenheiro de IA/ML | L3 | data-analysis, technical-writing | Modelos, prompts, RAG, agentes de IA via OmniRoute |
 | `data-engineering` | Engenheiro de Dados | L3 | data-analysis, technical-writing | Pipelines de dados, ETL, analytics, qualidade |
 | `cloud-infrastructure` | Engenheiro Cloud | L3 | technical-writing, quality-control | Azure, AWS, DevOps, IaC, arquitetura cloud |
-| `automation` | Engenheiro de Automação | L3 | technical-writing, quality-control | RPA, automação de processos, pipelines, CI/CD |
+| `network-infrastructure` | Engenheiro de Redes/SRE | L3 | technical-writing, quality-control, risk-analysis | Conectividade multiplataforma (Code Engine, OCI, Supabase, Drive), bancos, workflows, clouds, self-healing |
+| `automation` | Engenheiro de Automação | L3 | technical-writing, quality-control | RPA, automação de processos, pipelines, CI/CD, self-healing da infra HQ |
 | `cybersecurity` | Especialista em Cibersegurança | L3 | risk-analysis, technical-writing | White Hat, Blue Team, Red Team, LGPD, segurança IoT |
 | `iot-embedded` | Engenheiro IoT/Embarcados | L3 | technical-writing, data-analysis | IoT, Edge, Embedded, MicroPython, firmware, hardware |
 | `fullstack-dev` | Desenvolvedor Full Stack | L2 | technical-writing | Python, Angular, Java, JavaScript, HTML5, PyScript |
@@ -202,6 +203,7 @@
 | `ai-ml` | WK-002 (F4 IA), WK-003 (F5 modelagem) | OmniRoute, RAG, LangChain | Modelo, Prompt, Pipeline |
 | `data-engineering` | WK-002 (F4 dados), WK-003 (F3) | ETL, SQL, NoSQL, Spark | Pipeline, Dashboard, ETL |
 | `cloud-infrastructure` | WK-002 (F4 infra) | Azure, AWS, Terraform, Docker | Infraestrutura, IaC |
+| `network-infrastructure` | WK-002 (F4 conectividade) | Code Engine, OCI, Supabase, MongoDB, rclone | Health, Conectividade, Runbook |
 | `automation` | WK-002 (F4 automação) | RPA, CI/CD, GitHub Actions | Automação, Pipeline |
 | `cybersecurity` | WK-006 (cyber), WK-002 (segurança) | Pentest, SIEM, LGPD | Relatório de Segurança |
 | `iot-embedded` | WK-005 (F7), WK-006 (F1) | MicroPython, MQTT, Edge | Firmware, Sensor Data |
@@ -276,13 +278,13 @@
 | INTELLIGENCE | 4 | L2-L3 | WK-001 (F1-F3), WK-003 |
 | RESEARCH | 6 | L2-L3 | WK-001 (F4), WK-003 (F2-F6) |
 | ENGINEERING | 13 | L2-L3 | WK-001 (F4), WK-002, WK-005 |
-| TECHNOLOGY | 13 | L2-L3 | WK-002 (F4), WK-006 (F1) |
+| TECHNOLOGY | 14 | L2-L3 | WK-002 (F4), WK-006 (F1) |
 | BUSINESS_DEVELOPMENT | 7 | L2-L3 | WK-001 (F8-F11), WK-004 |
 | FINANCE | 6 | L2-L3 | WK-001 (F6-F7), WK-002 (F3) |
 | OPERATIONS | 9 | L1-L3 | WK-002 (F1-F10), PMO |
 | QUALITY | 6 | L2-L3 | WK-002 (F5-F6), WK-003 (F8) |
 | KNOWLEDGE | 1 | L3 | WK-002 (F10), WK-003 (F9) |
-| **TOTAL** | **68** | — | — |
+| **TOTAL** | **69** | — | — |
 
 > Nota: Alguns agentes pertencem a mais de uma divisão (ex: `environmental-forensic-audit` está em ENGINEERING e frequentemente consultado por QUALITY).
 

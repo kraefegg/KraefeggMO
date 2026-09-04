@@ -86,6 +86,10 @@ MATRIZ_ACESSO: List[Tuple[str, str]] = [
     ("security/cofre.py", "PUBLICO"),
     ("security/databricks.py", "PUBLICO"),
     ("security/hooks/", "PUBLICO"),
+    # Base de conhecimento da organização: divulgável no repo público
+    ("org/", "PUBLICO"),
+    ("crewai/", "PUBLICO"),
+    ("plano-projetos-digitais.md", "PUBLICO"),
 ]
 
 # Nível máximo permitido versionado no repo público
