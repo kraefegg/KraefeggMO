@@ -1,0 +1,214 @@
+analise_demanda_ceo:
+  description: >
+    Analise a demanda recebida e tome uma decisão executiva.
+
+    Demanda: {demanda_titulo}
+    Descrição: {demanda_descricao}
+    Segmento: {demanda_segmento}
+    Prioridade: {demanda_prioridade}
+
+    Sua análise deve:
+    1. Avaliar alinhamento com a estratégia corporativa da Kraefegg M.O.
+    2. Identificar se a demanda é viável (recurso, prazo, conhecimento)
+    3. Estimar potencial de receita e valor estratégico
+    4. Definir se aprova, rejeita ou solicita mais informações
+    5. Se aprovada, definir quais departamentos devem atuar
+
+    Seja decisivo e claro. Não hesite em rejeitar demandas que não agregam valor.
+  expected_output: >
+    Decisão executiva estruturada com:
+    - DECISÃO: APROVADA / REJEITADA / MAIS_INFO_NECESSARIA
+    - Justificativa (2-3 parágrafos)
+    - Departamentos envolvidos (lista)
+    - Prazo sugerido
+    - Potencial de receita estimado (se aplicável)
+  agent: ceo
+
+pesquisa_demanda:
+  description: >
+    Pesquise e analise a viabilidade técnica da demanda aprovada.
+
+    Demanda: {demanda_titulo}
+    Descrição: {demanda_descricao}
+    Segmento: {demanda_segmento}
+    Decisão do CEO: {decisao_ceo}
+
+    Sua pesquisa deve:
+    1. Verificar dados de mercado relevantes ao segmento
+    2. Identificar soluções técnicas similares já implementadas
+    3. Avaliar riscos técnicos e oportunidades
+    4. Estimar requisitos de recursos (pessoas, ferramentas, tempo)
+    5. Consultar fontes confiáveis e citar referências
+
+    Foco em dados factuais. Não especule sem base.
+  expected_output: >
+    Relatório de pesquisa com:
+    - Resumo executivo (3-5 frases)
+    - Análise de viabilidade técnica (alto/médio/baixo)
+    - Soluções identificadas (mínimo 2 opções)
+    - Riscos e oportunidades (tabela)
+    - Requisitos de recursos estimados
+    - Referências e fontes consultadas
+  agent: pesquisador_conselho
+
+desenvolvimento_ambiental:
+  description: >
+    Desenvolva a solução técnica ambiental para a demanda aprovada.
+
+    Demanda: {demanda_titulo}
+    Descrição: {demanda_descricao}
+    Pesquisa: {pesquisa_resultado}
+
+    Desenvolva:
+    1. Escopo técnico do estudo/projeto ambiental
+    2. Metodologia aplicável (EIA/RIMA, PCA/RCA, PRAD, etc.)
+    3. Cronograma de atividades
+    4. Requisitos de conformidade legal (CONAMA, SISNAMA)
+    5. Estimativa de custos ambientais
+
+    Formato: documento técnico estruturado em pt-BR.
+  expected_output: >
+    Documento técnico ambiental com:
+    - Escopo e objetivos
+    - Metodologia selecionada e justificativa
+    - Cronograma (fases e prazos)
+    - Conformidade legal aplicável
+    - Estimativa de custos
+    - Indicadores de sucesso
+  agent: engenheiro_ambiental
+
+desenvolvimento_software:
+  description: >
+    Projete a solução de software/IoT para a demanda aprovada.
+
+    Demanda: {demanda_titulo}
+    Descrição: {demanda_descricao}
+    Pesquisa: {pesquisa_resultado}
+
+    Projete:
+    1. Arquitetura da solução (componentes, fluxo de dados)
+    2. Stack tecnológica recomendada
+    3. APIs e integrações necessárias
+    4. Modelos de dados (se aplicável)
+    5. Estimativa de esforço de desenvolvimento
+
+    Formato: documento de design técnico em pt-BR.
+  expected_output: >
+    Documento de design técnico com:
+    - Arquitetura (diagrama descritivo)
+    - Stack tecnológica
+    - Endpoints/APIs planejados
+    - Schema de dados
+    - Estimativa de esforço (horas/dias)
+    - Dependências externas
+  agent: engenheiro_software
+
+proposta_comercial:
+  description: >
+    Elabore a proposta comercial para a demanda aprovada.
+
+    Demanda: {demanda_titulo}
+    Descrição: {demanda_descricao}
+    Segmento: {demanda_segmento}
+    Pesquisa: {pesquisa_resultado}
+    Solução técnica: {solucao_tecnica}
+
+    A proposta deve conter:
+    1. Apresentação da Kraefegg M.O. e diferenciais
+    2. Escopo detalhado do serviço/produto
+    3. Cronograma de entregas
+    4. Investimento (com base no orçamento fornecido)
+    5. Condições comerciais e termos
+    6. Casos de sucesso referência
+
+    Tom profissional, orientado a resultados, em pt-BR.
+  expected_output: >
+    Proposta comercial completa com:
+    - Sumário executivo
+    - Sobre a Kraefegg M.O.
+    - Escopo do projeto
+    - Cronograma
+    - Investimento (tabela de valores)
+    - Condições gerais
+    - Próximos passos
+  agent: comercial
+
+analise_financeira:
+  description: >
+    Realize a análise financeira completa para a demanda aprovada.
+
+    Demanda: {demanda_titulo}
+    Solução técnica: {solucao_tecnica}
+    Escopo comercial: {escopo_comercial}
+
+    Sua análise deve incluir:
+    1. Orçamento detalhado (CAPEX e OPEX)
+    2. Precificação do serviço/produto
+    3. Análise de ROI para o cliente
+    4. Fluxo de caixa projetado
+    5. Pontos de equilíbrio
+    6. Cenários (otimista, realista, pessimista)
+
+    Dados precisos. Sem erros de cálculo.
+  expected_output: >
+    Análise financeira com:
+    - Orçamento detalhado (tabela)
+    - Preço sugerido com justificativa
+    - ROI projetado (fórmula e resultado)
+    - Fluxo de caixa mensal
+    - Payback estimado
+    - Nota de risco financeiro
+  agent: analista_financeiro
+
+revisao_juridica:
+  description: >
+    Realize a revisão jurídica da proposta e contrato para a demanda.
+
+    Demanda: {demanda_titulo}
+    Proposta comercial: {proposta_comercial}
+
+    Verifique:
+    1. Conformidade com LGPD (dados do cliente)
+    2. Cláusulas contratuais necessárias
+    3. Regulações do setor (mineração, energia, ambiental)
+    4. Riscos legais identificados
+    5. Recomendações de proteção
+
+    Formato: parecer jurídico em pt-BR.
+  expected_output: >
+    Parecer jurídico com:
+    - Conformidade LGPD (OK / pendente)
+    - Cláusulas essenciais (lista)
+    - Riscos legais identificados
+    - Recomendações
+    - Aprovação condicional: SIM / NÃO
+  agent: juridico
+
+redacao_documento:
+  description: >
+    Redija o documento final de entrega para a demanda aprovada.
+
+    Demanda: {demanda_titulo}
+    Dados técnicos: {dados_tecnicos}
+    Análise financeira: {analise_financeira}
+    Parecer jurídico: {parecer_juridico}
+
+    O documento deve:
+    1. Ser um relatório/proposta executivo profissional
+    2. Incluir sumário executivo
+    3. Consolidar todas as seções anteriores
+    4. Ter formatação adequada para impressão/PDF
+    5. Incluir capa, sumário, corpo e anexos
+
+    Idioma: pt-BR. Tom executivo.
+  expected_output: >
+    Documento final executivo com:
+    - Capa (título, data, Kraefegg M.O.)
+    - Sumário executivo (1 página)
+    - Introdução
+    - Corpo técnico
+    - Análise financeira
+    - Aspectos jurídicos
+    - Cronograma e próximos passos
+    - Anexos (se aplicável)
+  agent: redator

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "kraefegg-mo-crewai"
+version = "0.1.0"
+description = "Kraefegg M.O. — Agentes CrewAI para processamento de demandas"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "crewai>=0.11.2",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.scripts]
+kraefegg = "kraefegg_mo.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HQ — Kraefegg M.O. · Painel de Gestão 3D</title>
+<title>KRAEFEGG M.O. · Tech-AI & Engineering Solutions · Central de Comando</title>
 <style>
   :root{
-    --bg1:#070b12; --bg2:#131a28; --panel:rgba(21,28,43,.9);
-    --linha:rgba(148,172,208,.22); --txt:#e8eefb; --dim:#8ea6c4;
-    --accent:#5ea0ff; --amber:#f2c94c;
-    --steelA:#39475e; --steelB:#8ca3c0; --steelC:#dde8f7;
+    --bg1:#0a0a0a; --bg2:#141414; --panel:rgba(20,20,20,.92);
+    --linha:rgba(180,180,180,.18); --txt:#e8e8e8; --dim:#8a8a8a;
+    --accent:#c0392b; --amber:#c0392b;
+    --steelA:#2c2c2c; --steelB:#6e6e6e; --steelC:#d4d4d4;
+    --red:#c0392b; --silver:#b8b8b8; --chrome:#d0d0d0;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%;background:#070b12;color:var(--txt);
@@ -45,7 +46,7 @@
   #gamifica .gm-tit b{color:var(--steelC);font-size:10px}
   #gamifica .gm-xp{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
   #gamifica .gm-xp .xp{font-size:26px;font-weight:800;line-height:1;
-    background:linear-gradient(180deg,#cfe6ff,#5ea0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+    background:linear-gradient(180deg,#cfe6ff,#c0392b);-webkit-background-clip:text;background-clip:text;color:transparent}
   #gamifica .gm-xp .lvl{font-size:9px;color:var(--amber);border:1px solid rgba(242,201,76,.5);
     padding:2px 8px;border-radius:999px;letter-spacing:.5px}
   #gamifica .gm-boss .lb{display:flex;justify-content:space-between;font-size:9px;text-transform:uppercase;
@@ -53,7 +54,7 @@
   #gamifica .gm-boss .lb b{color:#f06595}
   #gamifica .gm-bar{height:10px;border-radius:6px;background:rgba(120,150,255,.12);overflow:hidden;position:relative}
   #gamifica .gm-bar i{display:block;height:100%;border-radius:6px;width:0;position:relative;
-    background:linear-gradient(90deg,#f06595,#b197fc,#5ea0ff,#22d3ee);background-size:300% 100%;
+    background:linear-gradient(90deg,#f06595,#b197fc,#c0392b,#22d3ee);background-size:300% 100%;
     animation:gmShine 3s linear infinite;transition:width 1.2s ease}
   #gamifica .gm-bar i::after{content:"";position:absolute;inset:0;
     background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
@@ -68,13 +69,13 @@
 
   /* ---- Placa de identificação: logotipo iluminado ---- */
   #placa{position:relative;width:258px;height:48px;border-radius:9px;overflow:hidden;
-    background:linear-gradient(180deg,#3d4d68,#1b2334 46%,#28354b);
-    border:1px solid rgba(180,205,235,.38);
+    background:linear-gradient(180deg,#3a3a3a,#1a1a1a 46%,#2a2a2a);
+    border:1px solid rgba(200,200,200,.35);
     box-shadow:inset 0 1px 0 rgba(235,245,255,.3),inset 0 -2px 6px rgba(0,0,0,.5),0 6px 22px rgba(0,0,0,.55);
     animation:placaGlow 3.2s ease-in-out infinite}
   @keyframes placaGlow{
-    0%,100%{box-shadow:inset 0 1px 0 rgba(235,245,255,.3),inset 0 -2px 6px rgba(0,0,0,.5),0 0 10px rgba(94,160,255,.28),0 6px 22px rgba(0,0,0,.55)}
-    50%{box-shadow:inset 0 1px 0 rgba(235,245,255,.3),inset 0 -2px 6px rgba(0,0,0,.5),0 0 26px rgba(94,160,255,.62),0 6px 22px rgba(0,0,0,.55)}
+    0%,100%{box-shadow:inset 0 1px 0 rgba(235,245,255,.3),inset 0 -2px 6px rgba(0,0,0,.5),0 0 10px rgba(192,57,43,.28),0 6px 22px rgba(0,0,0,.55)}
+    50%{box-shadow:inset 0 1px 0 rgba(235,245,255,.3),inset 0 -2px 6px rgba(0,0,0,.5),0 0 26px rgba(192,57,43,.62),0 6px 22px rgba(0,0,0,.55)}
   }
   #placa::after{content:"";position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.16) 46%,transparent 62%);
@@ -83,16 +84,16 @@
   .placa-nome{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     font-family:Arial,'Times New Roman',Calibri,sans-serif;font-weight:700;font-size:18px;letter-spacing:5px;
     color:#fff;text-transform:uppercase;white-space:nowrap;
-    text-shadow:0 0 5px rgba(94,160,255,.95),0 0 13px rgba(94,160,255,.55),0 1px 2px rgba(0,0,0,.6);
+    text-shadow:0 0 5px rgba(192,57,43,.95),0 0 13px rgba(192,57,43,.55),0 1px 2px rgba(0,0,0,.6);
     animation:nomePulso 2.4s ease-in-out infinite}
   @keyframes nomePulso{
-    0%,100%{text-shadow:0 0 4px rgba(94,160,255,.8),0 0 11px rgba(94,160,255,.45),0 1px 2px rgba(0,0,0,.6)}
-    50%{text-shadow:0 0 9px rgba(94,160,255,1),0 0 22px rgba(94,160,255,.8),0 1px 2px rgba(0,0,0,.6)}
+    0%,100%{text-shadow:0 0 4px rgba(192,57,43,.8),0 0 11px rgba(192,57,43,.45),0 1px 2px rgba(0,0,0,.6)}
+    50%{text-shadow:0 0 9px rgba(192,57,43,1),0 0 22px rgba(192,57,43,.8),0 1px 2px rgba(0,0,0,.6)}
   }
   .blb{position:absolute;width:6px;height:6px;border-radius:50%;background:#131a28;
     box-shadow:inset 0 0 2px rgba(0,0,0,.8);pointer-events:none}
   .blb::after{content:"";position:absolute;inset:0;border-radius:50%;opacity:0;
-    background:var(--c,#5ea0ff);box-shadow:0 0 7px var(--c,#5ea0ff);
+    background:var(--c,#c0392b);box-shadow:0 0 7px var(--c,#c0392b);
     animation:blbPisca 1.6s var(--d) infinite}
   @keyframes blbPisca{0%,38%{opacity:1}55%,100%{opacity:0}}
   .logo .sub{font-size:10px;color:var(--dim);letter-spacing:2px}
@@ -100,8 +101,8 @@
   .chip{background:linear-gradient(180deg,rgba(30,39,58,.9),rgba(18,25,40,.9));
     border:1px solid var(--linha);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--dim);
     box-shadow:inset 0 1px 0 rgba(220,232,247,.07)}
-  .chip b{display:block;color:var(--steelC);font-size:14px;line-height:1.1}
-  .chip.v b{color:var(--amber)}
+  .chip b{display:block;color:#d4d4d4;font-size:14px;line-height:1.1}
+  .chip.v b{color:#c0392b}
   .chip.a b{color:var(--accent)}
 
   /* ---- Legenda de áreas ---- */
@@ -427,15 +428,15 @@
   #kpis{position:fixed;right:24px;top:86px;z-index:50;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .kpi{min-width:84px;padding:10px 14px;background:rgba(5,15,25,.82);border:1px solid rgba(80,130,170,.22);border-radius:9px;backdrop-filter:blur(12px)}
   .kpi span{display:block;font-size:8px;color:#6e8aa0;text-transform:uppercase;letter-spacing:.6px}
-  .kpi strong{display:block;margin-top:5px;font-size:19px;color:#27cfff;line-height:1}
+  .kpi strong{display:block;margin-top:5px;font-size:19px;color:#c0392b;line-height:1}
 
   .dpanel{position:fixed;z-index:40;width:225px;background:linear-gradient(145deg,rgba(5,19,31,.94),rgba(2,9,17,.78));border:1px solid rgba(50,130,180,.3);border-radius:10px;box-shadow:0 15px 50px rgba(0,0,0,.5),inset 0 0 30px rgba(0,120,190,.04);backdrop-filter:blur(18px)}
   #areas{left:20px;top:165px;max-height:calc(100vh - 270px);overflow-y:auto}
-  .panel-title{padding:14px 16px;font-size:12px;font-weight:700;color:#20bdf4;letter-spacing:.5px;border-bottom:1px solid rgba(80,150,190,.15)}
+  .panel-title{padding:14px 16px;font-size:12px;font-weight:700;color:#c0392b;letter-spacing:.5px;border-bottom:1px solid rgba(80,150,190,.15)}
   #areas .menu-item{padding:11px 16px;font-size:11px;border-bottom:1px solid rgba(100,150,180,.08);color:#b7c8d5;transition:.2s;cursor:pointer;display:flex;align-items:center;gap:8px}
   #areas .menu-item .nome{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #areas .menu-item:hover{background:rgba(0,150,220,.12);color:#fff}
-  #areas .menu-item.on{color:#fff;background:rgba(22,137,204,.18);box-shadow:inset 3px 0 0 #20bdf4}
+  #areas .menu-item.on{color:#fff;background:rgba(22,137,204,.18);box-shadow:inset 3px 0 0 #c0392b}
   #areas .menu-item .dot{width:8px;height:8px;border-radius:50%;flex:none}
   #areas .menu-item .ct{opacity:.55;font-size:9px;margin-left:auto}
 
@@ -448,9 +449,9 @@
 
   #status{position:fixed;left:20px;bottom:96px;width:225px;z-index:40;padding:16px;background:rgba(3,14,24,.88);border:1px solid rgba(50,130,180,.25);border-radius:10px;backdrop-filter:blur(14px);text-align:center}
   #status .status-title{color:#24c8f5;font-size:11px;margin-bottom:15px;letter-spacing:1px}
-  #st_ring{width:105px;height:105px;margin:auto;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;background:radial-gradient(circle,#06121d 58%,transparent 60%),conic-gradient(#39df72 0deg,#39df72 353deg,#163442 353deg)}
+  #st_ring{width:105px;height:105px;margin:auto;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;background:radial-gradient(circle,#06121d 58%,transparent 60%),conic-gradient(#c0392b 0deg,#c0392b 353deg,#163442 353deg)}
   #st_ring strong{font-size:20px;color:#e9f5ff}
-  #st_ring small{position:absolute;margin-top:46px;font-size:8px;color:#55e98a;letter-spacing:1px}
+  #st_ring small{position:absolute;margin-top:46px;font-size:8px;color:#c0392b;letter-spacing:1px}
 
   #footer{position:fixed;bottom:0;left:0;width:100%;height:70px;z-index:100;display:flex;align-items:center;padding:0 25px;background:rgba(2,7,14,.95);border-top:1px solid rgba(60,130,180,.2);backdrop-filter:blur(16px)}
   #footer .fbrand{width:250px}
@@ -480,7 +481,7 @@
   <div id="hud">
     <div class="logo">
       <div id="placa"></div>
-      <div class="sub">MINERAÇÃO · ENERGIA · ENGENHARIA AMBIENTAL · SISTEMA MULTIAGENTE</div>
+      <div class="sub">TECH-AI & ENGINEERING SOLUTIONS · MINING · ENERGY · ENVIRONMENTAL · MULTI-AGENT SYSTEM</div>
     </div>
     <div id="tabs">
       <button id="tab_equipe" class="on" onclick="setModo('equipe')">Equipe 3D</button>
@@ -528,7 +529,7 @@
   <div id="hint">Clique em um agente para ver o detalhe · arraste para orbitar · rolagem para zoom · clique na área para filtrar</div>
 
   <div id="gamifica">
-    <div class="gm-tit"><b>KRAEFEGG M.O.</b>Gamificação · Conselho</div>
+    <div class="gm-tit"><b>KRAEFEGG M.O. Tech-AI</b>Gamificação · Conselho</div>
     <div class="gm-xp"><span class="xp" id="gm_xp">0</span> XP <span class="lvl" id="gm_lvl">NÍVEL 0</span></div>
     <div class="gm-boss">
       <div class="lb"><span>⚡ Chefe do Conselho · Sinergia</span><b id="gm_sin">0%</b></div>
@@ -596,7 +597,7 @@
   </div>
 
   <div id="footer">
-    <div class="fbrand"><strong>KRAEFEGG <span style="color:#f2c94c">M.O.</span></strong><small>PLATAFORMA MULTIAGENTE · MINERAÇÃO · ENERGIA · AMBIENTAL</small></div>
+    <div class="fbrand"><strong>KRAEFEGG <span style="color:#c0392b">M.O.</span></strong><small>TECH-AI & ENGINEERING SOLUTIONS · MINING · ENERGY · ENVIRONMENTAL</small></div>
     <div class="quick">
       <button onclick="abrirNovaDemanda()">＋ Nova Demanda</button>
       <button onclick="setModo('dossies')">＋ Novo Dossiê</button>
@@ -624,7 +625,7 @@
         s.style.top = (b<9 ? 5 : 37) + 'px';
         s.style.left = (6 + (b%9)*27) + 'px';
         s.style.setProperty('--d', (b*0.09) + 's');
-        s.style.setProperty('--c', (b%2 ? '#f2c94c' : '#5ea0ff'));
+        s.style.setProperty('--c', (b%2 ? '#f2c94c' : '#c0392b'));
         placa.appendChild(s);
       }
     }
@@ -674,15 +675,15 @@
       for(var i=0;i<winLit.length;i++){ winLit[i] = rnd() < .42; winCol[i] = rnd() < .18 ? '#f2c94c' : '#7fc4ff'; }
       signX = x0 + Math.floor((44 - SIGN.length*3)/2);
       cars = [];
-      for(var k=0;k<5;k++) cars.push({ x: rnd()*GW, dir: rnd()<.5?-1:1, v: .35+rnd()*.5, c: ['#8ca3c0','#5ea0ff','#f2c94c','#4b5a72','#c9d6ea'][k] });
+      for(var k=0;k<5;k++) cars.push({ x: rnd()*GW, dir: rnd()<.5?-1:1, v: .35+rnd()*.5, c: ['#8ca3c0','#c0392b','#f2c94c','#4b5a72','#c9d6ea'][k] });
       rain = [];
       var rcols = [7, 22, 40, 112, 124, 138];
       for(var rr=0; rr<rcols.length; rr++) rain.push({ x: rcols[rr]+(rr%2), y: Math.floor(rnd()*40), v: .4+rnd()*.7 });
       drones = [];
-      for(var dd=0; dd<3; dd++) drones.push({ x: rnd()*GW, y: 12+dd*6, dir: dd%2?-1:1, v: .3+rnd()*.3, c: ['#5ea0ff','#22d3ee','#f06595'][dd] });
+      for(var dd=0; dd<3; dd++) drones.push({ x: rnd()*GW, y: 12+dd*6, dir: dd%2?-1:1, v: .3+rnd()*.3, c: ['#c0392b','#22d3ee','#f06595'][dd] });
       neon = [
         { x: 7,  y: 44, txt: 'MINA', c1: '#b197fc', c2: '#f06595' },
-        { x: 119, y: 40, txt: 'EDGE', c1: '#22d3ee', c2: '#5ea0ff' }
+        { x: 119, y: 40, txt: 'EDGE', c1: '#22d3ee', c2: '#c0392b' }
       ];
       fog = [ { y: ground-2, v: .02 }, { y: ground-6, v: .015 }, { y: ground-4, v: .025 } ];
       shoot = null; flash = 0;
@@ -1109,7 +1110,7 @@
       if(!el) return;
       const oper = calcOper();
       if(elPct) elPct.textContent = oper+'%';
-      el.style.background = 'radial-gradient(circle,#06121d 58%,transparent 60%),conic-gradient(#39df72 0deg,#39df72 '+Math.max(0,oper*3.6-3)+'deg,#163442 '+Math.max(0,oper*3.6-3)+'deg)';
+      el.style.background = 'radial-gradient(circle,#06121d 58%,transparent 60%),conic-gradient(#c0392b 0deg,#c0392b '+Math.max(0,oper*3.6-3)+'deg,#163442 '+Math.max(0,oper*3.6-3)+'deg)';
     }
     atualizarStatus();
 
@@ -1441,7 +1442,7 @@
       for(let i=0;i<k;i++) rnd = (rnd*16807)%2147483647;
       const cabelo = ['#3a4a63','#5a3a2a','#2a2f3a','#4a2a3a','#3a5a4a','#242424'][Math.floor(rnd01()*6)];
       const tom = ['#e8c39a','#d9a878','#c68b5f','#f2d0a8'][Math.floor(rnd01()*4)];
-      const unif = hexUnif || '#5ea0ff';
+      const unif = hexUnif || '#c0392b';
       const casac = shadeHex(unif, -20);
       const g = Array.from({length:W*H}, function(){ return null; });
       const setp = function(c,r,v){ if(c<0||c>=W||r<0||r>=H||v===null) return; g[r*W+c]=v; };
@@ -1766,7 +1767,7 @@
       for(var i=0;i<comuns.length;i++){ if(p.toLowerCase().indexOf(comuns[i])>=0){ bits=Math.min(bits,24); break; } }
       var score = bits<28?0 : bits<40?1 : bits<56?2 : bits<76?3 : 4;
       var nomes=['Crítica','Fraca','Média','Forte','Excelente'];
-      var cores=['#ff6b6b','#ff8a5c','#f2c94c','#51cf66','#5ea0ff'];
+      var cores=['#ff6b6b','#ff8a5c','#f2c94c','#51cf66','#c0392b'];
       var pct=Math.min(100, Math.round(bits/80*100));
       var crack = bits<=0?'—' : bits<40?'segundos' : bits<60?'horas' : bits<80?'meses' : 'anos';
       return { score:score, bits:Math.round(bits), forca:nomes[score], cor:cores[score], pct:pct, crack:crack };

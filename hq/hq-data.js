@@ -3,8 +3,8 @@
 // Fonte de verdade do quadro: AGENTS.md (estrutura corporativa).
 
 const ORG = {
-  nome: "Kraefegg M.O.",
-  subtitulo: "MINERAÇÃO · ENERGIA · ENGENHARIA AMBIENTAL · SISTEMA MULTIAGENTE",
+  nome: "KRAEFEGG M.O.",
+  subtitulo: "TECH-AI & ENGINEERING SOLUTIONS · MINING · ENERGY · ENVIRONMENTAL",
   modelo: "ECONOMIA DE MERCADO · OFERTA E DEMANDA",
   metaReceita90d: "R$ 15–40 mil (1ª rodada)",
   pipeline: "3 propostas · 8 reuniões · 40 contatos",

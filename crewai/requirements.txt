@@ -1,0 +1,23 @@
+# CrewAI + Kraefegg M.O.
+
+# Python 3.12 ou 3.13 (3.14 incompatível com crewai 0.11.2)
+crewai>=0.11.2
+crewai-tools>=0.14.0
+
+# LLM providers
+litellm>=1.30.0
+openai>=1.7.0,<2.0.0
+langchain>=0.1.0,<0.2.0
+langchain-openai>=0.0.5,<0.0.6
+
+# Config
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# Observability
+opentelemetry-api>=1.22.0,<2.0.0
+opentelemetry-sdk>=1.22.0,<2.0.0
+opentelemetry-exporter-otlp-proto-http>=1.22.0,<2.0.0
+
+# Utils
+instructor>=0.5.2,<0.6.0

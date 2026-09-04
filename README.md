@@ -1,6 +1,6 @@
-# Kraefegg M.O.
+# KRAEFEGG M.O. Tech-AI & Engineering Solutions
 
-Empresa de mineração, energia e engenharia ambiental estruturada como sistema multiagente.
+Tech-AI & Engineering Solutions firm — mining, energy & environmental engineering — structured as a multi-agent corporate AI workforce.
 
 ## Arquitetura
 - **3 executivos**: `ceo` (estratégia), `cto` (tecnologia), `market-segment` (segmento de mercado).

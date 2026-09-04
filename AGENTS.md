@@ -1,6 +1,6 @@
-# Kraefegg M.O. — Estrutura Corporativa de Agentes
+# KRAEFEGG M.O. Tech-AI & Engineering Solutions — Corporate AI Workforce
 
-Empresa de **mineração, energia e engenharia ambiental** estruturada como sistema multiagente.
+Tech-AI & Engineering Solutions firm — **mining, energy & environmental engineering** — structured as a multi-agent corporate AI workforce.
 
 ## Executivos (agentes primários)
 | Agente | Atribuição |
