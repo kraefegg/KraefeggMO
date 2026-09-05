@@ -697,13 +697,13 @@ const RELATORIOS = [
 ];
 
 // ============ CONFIG DE BANCO DO HQ (Supabase REST — chave publishable) ============
-// A chave anon/publishable é pública por design (proteção via RLS). O módulo
-// Relatórios usa este endpoint e, se falhar, opera em modo offline (seed + localStorage).
+// Acesso direto a Supabase encerrado: RLS aplicado nega anon (service_role é só no
+// servidor). O módulo Relatórios opera em modo offline (seed + localStorage).
 const HQ_DB = {
   suporte: true,
   supabase: {
     url: 'https://mrqjmdfulmnggozwjxlq.supabase.co',
-    key: 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y'
+    key: ''
   }
 };
 
