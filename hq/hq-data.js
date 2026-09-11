@@ -596,16 +596,27 @@ window.FASES = FASES;
 window.DEMANDAS = DEMANDAS;
 window.PESSOAS = PESSOAS;
 
-// ============ API DAS DEMANDAS — CE-STRATEGIC (Supabase) ============
+// ============ API DAS DEMANDAS — KRAEFEGG-MO HUB (Code Engine) ============
 // Fonte viva das demandas: o backend estratégico (Code Engine) registra no
 // Supabase. O corporate-hq.html puxa daqui e mescla com o seed local,
 // degradando para o modo offline (seed + localStorage) se a API falhar.
+// NOVO: Hub Kraefegg-MO integrado ao projeto OXYGEN.
 const HQ_API = {
   suporte: true,
+  kraegg_mo_hub: {
+    url: 'https://kraefegg-mo.2e4s1hfdcw14.br-sao.codeengine.appdomain.cloud',
+    token: 'kraefegg-mo-2026',
+    demandas_path: '/demandas',
+    oxygen_integrated: true,
+    project: 'oxygen',
+    description: 'Kraefegg MO Hub - OXYGEN project integration'
+  },
   ce_strategic: {
     url: 'https://ce-strategic.2e4s1hfdcw14.br-sao.codeengine.appdomain.cloud',
     token: 'kraefegg-mo-2026',
-    demandas_path: '/demandas'
+    demandas_path: '/demandas',
+    legacy: true,
+    description: 'Legacy CE-Strategic endpoint (maintained for backward compatibility)'
   }
 };
 
